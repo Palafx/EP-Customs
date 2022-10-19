@@ -51,7 +51,7 @@ function s.thcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetFieldGroupCount(tp,LOCATION_PZONE,0) == 1
 end
 function s.setfilter(c)
-	return (c:IsCode(15582767) or c:IsCode(17885118) or c:IsCode(46005939)) and c:IsSSetable()
+	return (c:IsCode(15582767) or c:IsCode(65646587) or c:IsCode(46005939)) and c:IsSSetable()
 end
 function s.settg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.setfilter,tp,LOCATION_DECK,0,1,nil) end
