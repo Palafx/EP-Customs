@@ -1,5 +1,5 @@
---- Yrakle, The Synchronized Atrocity - Errata
--- Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Yrakle, The Synchronized Atrocity - Errata
+--Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
@@ -57,7 +57,7 @@ function s.initial_effect(c)
 end
 --add
 function s.thfilter(c)
-	return (c:IsCode(99243014) or c:IsCode(35014241) or c:IsCode(35817848))  and c:IsAbleToHand()
+	return (c:IsCode(65196094) or c:IsCode(88332693) or c:IsCode(80280737))  and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil) end
