@@ -1,4 +1,0 @@
-#Custom Archetype
-!setname 0x4cf Centicreep
-!setname 0x53d Parasit
-!setname 0x499 Adaptive
