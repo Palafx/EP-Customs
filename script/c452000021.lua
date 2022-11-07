@@ -27,6 +27,12 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 --spsummon
+function s.pfilter(c)
+  return c:IsPublic() and c:IsSetCard(0x53d) and c:IsLevel(2)
+end
+function s.ownfilter(c,tp)
+  return c:GetOwner()==1-tp
+end
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetFieldGroup(tp,0,LOCATION_HAND)
   local n1=g:FilterCount(s.pfilter,nil)
