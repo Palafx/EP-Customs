@@ -1,5 +1,5 @@
---- Parasitoid Compressa
---- Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Parasitoid Compressa
+--Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
 local s,id=GetID()
 function s.initial_effect(c)
   --Link summon
@@ -13,7 +13,7 @@ function s.initial_effect(c)
   e1:SetHintTiming(0,TIMING_BATTLE_START+TIMING_MAIN_END)
   e1:SetCode(EVENT_FREE_CHAIN)
   e1:SetRange(LOCATION_MZONE)
-  e1:SetCountLimit(1)
+  e1:SetCountLimit(1,id)
   e1:SetTarget(s.target)
   e1:SetOperation(s.operation)
   c:RegisterEffect(e1)
@@ -23,11 +23,11 @@ function s.initial_effect(c)
   e2:SetCategory(CATEGORY_TOKEN+CATEGORY_SPECIAL_SUMMON)
   e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
   e2:SetCode(EVENT_DESTROYED)
+  e2:SetProperty(EFFECT_FLAG_DELAY)
   e2:SetTarget(s.drtg)
   e2:SetOperation(s.drop)
   c:RegisterEffect(e2)
 end
-
 --draw
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
   if chk==0 then return true end

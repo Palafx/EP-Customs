@@ -1,39 +1,42 @@
---- Gromir, The Fusioned Amalgam - Errata and update
---- Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Gromir, The Fusioned Amalgam - Errata and update
+--Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
---Fusion Materials
+	--Fusion Materials
 	Fusion.AddProcMix(c,true,true,aux.FilterBoolFunctionEx(Card.IsType,TYPE_TUNER),s.matfilter)
---Add Polymerization, Express Polymerization or Miracle Synchro Fusion
+	--Add Polymerization, Express Polymerization or Miracle Synchro Fusion
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,3))
 	e1:SetCategory(CATEGORY_TOHAND)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e1:SetProperty(EFFECT_FLAG_DELAY)
+	e1:SetCountLimit(1,id)
 	e1:SetCondition(s.thcon)
 	e1:SetTarget(s.thtg)
 	e1:SetOperation(s.thop)
 	c:RegisterEffect(e1)
---Special Summon from Deck or Extra
+	--Special Summon from Deck or Extra
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_QUICK_O)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1,{id,1})
 	e2:SetCost(s.spcost)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
---Draw when banished
+	--Draw when banished
 	local e5=Effect.CreateEffect(c)
 	e5:SetDescription(aux.Stringid(id,1))
 	e5:SetCategory(CATEGORY_DRAW)
 	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	e5:SetCode(EVENT_REMOVE)
+	e5:SetCountLimit(1,{id,2})
 	e5:SetTarget(s.drwtg)
 	e5:SetOperation(s.drwop)
 	c:RegisterEffect(e5)
