@@ -1,5 +1,5 @@
---- Stag Sage
---- Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Stag Sage
+--Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
 	local s,id=GetID()
 	function s.initial_effect(c)
 	--Special Summon
@@ -28,8 +28,7 @@ end
 --special summon
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and c:IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and c:IsCanBeSpecialSummoned(e,0,tp,false,false) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,c,1,0,0)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
@@ -45,8 +44,11 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --mill
+function s.mfilter(c,e,tp)
+	return c:IsRace(RACE_INSECT) and c:IsLevelBelow(4) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id)
+end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsPlayerCanDiscardDeckAsCost(tp,1) end
+	if chk==0 then return Duel.IsPlayerCanDiscardDeckAsCost(tp,1) and Duel.IsExistingMatchingCard(s.mfilter,tp,LOCATION_DECK,0,1,nil,e,tp) end
 	local ct={}
 	for i=4,1,-1 do
 		if Duel.IsPlayerCanDiscardDeckAsCost(tp,i) then
@@ -70,7 +72,7 @@ end
 function s.filter(c,e,tp)
 	ac=e:GetLabel()
 	return c:IsLevel(ac) and c:IsRace(RACE_INSECT)
-		and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+		and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<=0 then return end
