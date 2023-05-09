@@ -75,6 +75,9 @@ end
 function s.filter(c)
 	return c:IsLevel(2) and c:IsSetCard(0x53d) and c:IsAbleToHand()
 end
+function s.rmfilter(c)
+	return c:IsFacedown() and c:IsAbleToRemove()
+end
 function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_ALL,0,1,nil) end
 	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_ALL,0,nil)
@@ -84,15 +87,24 @@ function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.activate2(e,tp,eg,ep,ev,re,r,rp)
 	--send "parasit" monsters everywhere to opp hand
-	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_ALL,0,nil)
-	if #g>0 then
-		Duel.SendtoHand(g,1-tp,REASON_EFFECT)
+	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_HAND+LOCATION_DECK,0,nil)
+	local gct=Duel.GetMatchingGroupCount(s.filter,tp,0,LOCATION_HAND,0,nil)
+	if #g>=5 then
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOHAND)
+		local sg=g:Select(tp,5,5,nil)
+		Duel.SendtoHand(sg,1-tp,REASON_EFFECT)
 		Duel.BreakEffect()
 		local ct=Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)
-		local tct=ct*400
+		local tct=ct*300
 		local gt=Duel.GetDecktopGroup(1-tp,ct)
 		Duel.BreakEffect()
 		if gt and Duel.SendtoHand(gt,tp,REASON_EFFECT) then
+			local ex=Duel.GetMatchingGroup(s.rmfilter,tp,0,LOCATION_EXTRA,nil)
+			if #ex==0 then return end
+			local tc=ex:RandomSelect(tp,gct)
+			Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)
+			local rex=Duel.GetFieldGroup(tp,0,LOCATION_REMOVED)
+			Duel.SendtoDeck(rex,tp,0,REASON_EFFECT)
 			local tgop=Duel.GetFieldGroup(tp,0,LOCATION_HAND)
 			local tg=Duel.GetFieldGroup(tp,LOCATION_HAND,0)--add opp's cards to own hand
 			Duel.Recover(1-tp,tct,REASON_EFFECT) --opp gains lp
