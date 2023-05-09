@@ -18,6 +18,8 @@ function s.initial_effect(c)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
 end
+s.listed_series={0x53d}
+s.listed_names={id}
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
   local g=Duel.GetFieldGroup(tp,0,LOCATION_HAND)
   local n1=g:FilterCount(s.pfilter,nil)
