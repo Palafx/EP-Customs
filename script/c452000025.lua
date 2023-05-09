@@ -79,9 +79,9 @@ function s.rmfilter(c)
 	return c:IsFacedown() and c:IsAbleToRemove()
 end
 function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_ALL,0,1,nil) end
-	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_ALL,0,nil)
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,tp,LOCATION_ALL)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_HAND+LOCATION_DECK,0,1,nil) end
+	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_HAND+LOCATION_DECK,0,nil)
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,tp,LOCATION_HAND+LOCATION_DECK)
 	Duel.SetOperationInfo(0,CATEGORY_HANDES,Duel.GetFieldGroup(tp,0,LOCATION_HAND),1,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,1-tp,300)
 end
@@ -89,10 +89,8 @@ function s.activate2(e,tp,eg,ep,ev,re,r,rp)
 	--send "parasit" monsters everywhere to opp hand
 	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_HAND+LOCATION_DECK,0,nil)
 	local gct=Duel.GetMatchingGroupCount(s.filter,tp,0,LOCATION_HAND,0,nil)
-	if #g>=5 then
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOHAND)
-		local sg=g:Select(tp,5,5,nil)
-		Duel.SendtoHand(sg,1-tp,REASON_EFFECT)
+	if #g>0 then
+		Duel.SendtoHand(g,1-tp,REASON_EFFECT)
 		Duel.BreakEffect()
 		local ct=Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)
 		local tct=ct*300
