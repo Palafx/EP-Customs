@@ -2,7 +2,7 @@
 --Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
 local s,id=GetID()
 function s.initial_effect(c)
---Activate
+	--Activate
 	local e0=Effect.CreateEffect(c)
 	e0:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e0:SetType(EFFECT_TYPE_ACTIVATE)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e0:SetTarget(s.target2)
 	e0:SetOperation(s.activate2)
 	c:RegisterEffect(e0)
-	--Activate
+	--GY Effect
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_TOGRAVE+CATEGORY_SPECIAL_SUMMON)
 	e1:SetType(EFFECT_TYPE_QUICK_O)
@@ -79,15 +79,15 @@ function s.rmfilter(c)
 	return c:IsFacedown() and c:IsAbleToRemove()
 end
 function s.target2(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_HAND+LOCATION_DECK,0,1,nil) end
-	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_HAND+LOCATION_DECK,0,nil)
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,tp,LOCATION_HAND+LOCATION_DECK)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil) end
+	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,nil)
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,g,1,tp,LOCATION_HAND+LOCATION_GRAVE)
 	Duel.SetOperationInfo(0,CATEGORY_HANDES,Duel.GetFieldGroup(tp,0,LOCATION_HAND),1,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_RECOVER,nil,0,1-tp,300)
 end
 function s.activate2(e,tp,eg,ep,ev,re,r,rp)
 	--send "parasit" monsters everywhere to opp hand
-	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_HAND+LOCATION_DECK,0,nil)
+	local g=Duel.GetMatchingGroup(s.filter,tp,LOCATION_HAND+LOCATION_GRAVE,0,nil)
 	local gct=Duel.GetMatchingGroupCount(s.filter,tp,0,LOCATION_HAND,0,nil)
 	if #g>0 then
 		Duel.SendtoHand(g,1-tp,REASON_EFFECT)
