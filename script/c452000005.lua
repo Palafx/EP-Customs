@@ -1,5 +1,5 @@
---- Parasite Exigua
---- Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Parasite Exigua
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--Send itself to the hand
@@ -9,11 +9,12 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
 	e1:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+	e1:SetCountLimit(1,{id,1})
 	e1:SetCost(s.cost)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
-		Duel.AddCustomActivityCounter(id,ACTIVITY_SPSUMMON,s.counterfilter)
+	Duel.AddCustomActivityCounter(id,ACTIVITY_SPSUMMON,s.counterfilter)
 	local e2=e1:Clone()
 	e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
 	c:RegisterEffect(e2)
@@ -23,19 +24,21 @@ function s.initial_effect(c)
 	--Gain LP
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,0))
-	e4:SetCategory(CATEGORY_DISABLE)
+	e4:SetCategory(CATEGORY_RECOVER)
 	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e4:SetCode(EVENT_TO_GRAVE)
 	e4:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+	e4:SetCountLimit(1,{id,2})
 	e4:SetCondition(s.tgcon)
 	e4:SetTarget(s.tgtg)
 	e4:SetOperation(s.tgop)
 	c:RegisterEffect(e4)
 end
+s.listed_names={id,982198099}
+--can only special summon insects
 function s.counterfilter(c)
 	return c:IsRace(RACE_INSECT)
 end
---to hand+token
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetCustomActivityCount(id,tp,ACTIVITY_SPSUMMON)==0 end
 	local e1=Effect.CreateEffect(e:GetHandler())
@@ -56,7 +59,8 @@ function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.splimit(e,c,sump,sumtype,sumpos,targetp,se)
 	return not c:IsRace(RACE_INSECT)
-	end
+end
+--to hand
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsAbleToHand()
 		and Duel.IsPlayerCanSpecialSummonMonster(tp,982198099,0,TYPES_TOKEN,0,0,1,RACE_INSECT,ATTRIBUTE_EARTH) end
@@ -67,9 +71,9 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if c:IsRelateToEffect(e) and Duel.SendtoHand(c,1-tp,REASON_EFFECT)~=0 and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and Duel.IsPlayerCanSpecialSummonMonster(tp,982198099,0,TYPES_TOKEN,0,0,1,RACE_INSECT,ATTRIBUTE_EARTH) then
-			Duel.BreakEffect()
-			local token=Duel.CreateToken(tp,982198099)
-			Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
+		Duel.BreakEffect()
+		local token=Duel.CreateToken(tp,982198099)
+		Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
 	end
 end
 --recover

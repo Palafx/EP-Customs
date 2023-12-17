@@ -23,9 +23,11 @@ function s.initial_effect(c)
 	e2:SetOperation(s.thop)
 	c:RegisterEffect(e2)
 end
+s.listed_names={id}
+s.listed_series={0x53d}
 --banish
 function s.dkfilter(c)
-  return c:IsPublic() and c:IsSetCard(0x53d) and c:IsLevel(2)
+	return c:IsPublic() and c:IsSetCard(0x53d) and c:IsLevel(2)
 end
 function s.dktg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local ct=Duel.GetMatchingGroupCount(s.dkfilter,tp,0,LOCATION_HAND,nil,1-tp)
@@ -46,14 +48,14 @@ function s.thfilter(c)
 	return c:IsSetCard(0x53d) and c:IsLevel(2) and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
-  if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_GRAVE,0,1,nil) and Duel.IsPlayerCanDraw(tp,1) end
-  Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_GRAVE,0,1,nil) and Duel.IsPlayerCanDraw(tp,1) end
+	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_GRAVE)
 end
 function s.thop(e,tp,eg,ep,ev,re,r,rp)
-  Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-  local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_GRAVE,0,1,1,nil)
-  if #g>0 and Duel.SendtoHand(g,1-tp,REASON_EFFECT) then
-    Duel.BreakEffect()
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_GRAVE,0,1,1,nil)
+	if #g>0 and Duel.SendtoHand(g,1-tp,REASON_EFFECT) then
+		Duel.BreakEffect()
 		Duel.Draw(tp,1,REASON_EFFECT)
-  end
+	end
 end

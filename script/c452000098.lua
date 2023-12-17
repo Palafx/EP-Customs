@@ -26,16 +26,7 @@ function s.initial_effect(c)
 	e4:SetTarget(s.target)
 	e4:SetOperation(s.operation)
 	c:RegisterEffect(e4)
-	--Return Banished Cards
-	local e5=Effect.CreateEffect(c)
-	e5:SetDescription(aux.Stringid(id,1))
-	e5:SetCategory(CATEGORY_DRAW)
-	e5:SetCode(EVENT_DESTROYED)
-	e5:SetTarget(s.drtg)
-	e5:SetOperation(s.drop)
-	c:RegisterEffect(e5)
 end
-s.listed_series={0x53d}
 --link material
 function s.lcheck(g,lc,sumtype,tp)
 	return g:IsExists(Card.IsSetCard,1,nil,0x53d,lc,sumtype,tp)
@@ -43,17 +34,19 @@ end
 --originl atk
 function s.atkop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
+	local g=c:GetMaterial()
 	if not c:IsSummonType(SUMMON_TYPE_LINK) then return end
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetCode(EFFECT_SET_BASE_ATTACK)
-	e1:SetValue(c:GetMaterialCount()*1000)
+	e1:SetValue(g:FilterCount(Card.IsRace,nil,RACE_INSECT)*1000)
 	e1:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
 	c:RegisterEffect(e1)
 end
 --gain lp
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
-    return ep~=tp 
+    local attacked=Duel.GetAttackTarget()
+	return attacked
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
     if chk==0 then return true end
@@ -64,29 +57,4 @@ end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
     local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
     Duel.Recover(p,d,REASON_EFFECT)
-end
---return banished cards
-function s.filter(c)
-    return c:IsAbleToDeck()
-end
-function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-    if chkc then return chkc:IsLocation(LOCATION_REMOVED) and chkc:IsControler(tp) and s.filter(chkc) end
-    if chk==0 then return Duel.IsPlayerCanDraw(tp,1)
-        and Duel.IsExistingTarget(s.filter,tp,LOCATION_REMOVED,0,1,nil) end
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
-    local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_REMOVED,0,1,3,nil)
-    Duel.SetOperationInfo(0,CATEGORY_TODECK,g,#g,0,0)
-    Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
-end
-function s.drop(e,tp,eg,ep,ev,re,r,rp)
-    local tg=Duel.GetChainInfo(0,CHAININFO_TARGET_CARDS)
-    Duel.SendtoDeck(tg,nil,0,REASON_EFFECT)
-    local g=Duel.GetOperatedGroup()
-    if g:IsExists(Card.IsLocation,1,nil,LOCATION_DECK) then 
-    Duel.ShuffleDeck(tp) end
-    local ct=g:FilterCount(Card.IsLocation,nil,LOCATION_DECK+LOCATION_EXTRA)
-    if ct>0 then
-        Duel.BreakEffect()
-        Duel.Draw(tp,1,REASON_EFFECT)
-    end
 end

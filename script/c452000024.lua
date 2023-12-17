@@ -1,4 +1,5 @@
 --Parasitic Decay
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--Activate
@@ -17,6 +18,17 @@ function s.initial_effect(c)
 	e2:SetTarget(s.target)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
+	--Shuffle 2 of your banished cards into the Deck
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,2))
+	e4:SetCategory(CATEGORY_TODECK)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e4:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
+	e4:SetCode(EVENT_TO_GRAVE)
+	e4:SetCountLimit(1,{id,1})
+	e4:SetTarget(s.tdtg)
+	e4:SetOperation(s.tdop)
+	c:RegisterEffect(e4)
 end
 s.listed_series={0x53d}
 s.listed_names={id}
@@ -58,5 +70,21 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local gt=Duel.GetDecktopGroup(1-tp,1)
 	if gt then
 		Duel.SendtoHand(gt,tp,REASON_EFFECT)
+	end
+end
+--
+function s.tdfilter(c)
+	return c:IsSetCard(0x53d) and c:IsAbleToDeck()
+end
+function s.tdtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.tdfilter,tp,LOCATION_REMOVED,0,2,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TODECK,nil,2,tp,LOCATION_REMOVED)
+end
+function s.tdop(e,tp,eg,ep,ev,re,r,rp,chk)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
+	local g=Duel.SelectMatchingCard(tp,s.tdfilter,tp,LOCATION_REMOVED,0,2,2,nil)
+	if #g>0 then
+		Duel.HintSelection(g)
+		Duel.SendtoDeck(g,nil,SEQ_DECKSHUFFLE,REASON_EFFECT)
 	end
 end

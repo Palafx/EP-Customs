@@ -12,13 +12,13 @@ function s.initial_effect(c)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
 end
+s.listed_series={0x53d}
 function s.filter(c)
 	return c:IsLevel(2) and c:IsSetCard(0x53d) and c:IsAbleToDeck()
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_GRAVE) and chkc:IsControler(tp) and s.filter(chkc) end
-	if chk==0 then return Duel.GetDecktopGroup(1-tp,2)
-		and Duel.IsExistingTarget(s.filter,tp,LOCATION_GRAVE,0,5,nil) end
+	if chk==0 then return Duel.GetDecktopGroup(1-tp,2) and Duel.IsExistingTarget(s.filter,tp,LOCATION_GRAVE,0,5,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TODECK)
 	local g=Duel.SelectTarget(tp,s.filter,tp,LOCATION_GRAVE,0,5,5,nil)
 	Duel.SetOperationInfo(0,CATEGORY_TODECK,g,#g,0,0)
