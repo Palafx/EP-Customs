@@ -2,13 +2,13 @@
 --Scripted by AJ and EP Custom cards
 local s,id=GetID()
 function s.initial_effect(c)
---activate
+	--Activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetHintTiming(0,TIMING_MAIN_END)
 	c:RegisterEffect(e1)
---attribute
+	--Change Attribute
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetType(EFFECT_TYPE_QUICK_O)
@@ -19,7 +19,7 @@ function s.initial_effect(c)
 	e2:SetTarget(s.lvtg)
 	e2:SetOperation(s.lvop)
 	c:RegisterEffect(e2)
-	--fusion summon
+	--Fusion Summon
 	local params = {aux.FilterBoolFunction(Card.IsSetCard,0x499)}
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,0))
