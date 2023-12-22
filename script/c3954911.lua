@@ -1,11 +1,12 @@
----	Darkbrave Dragon Lord
+--Darkbrave Dragon Lord
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
-	---	Xyz Summon
+	--Xyz Summon
 	Xyz.AddProcedure(c,nil,7,2)
 	c:EnableReviveLimit()
-	---	Destroy Attack Position monsters
-local e4=Effect.CreateEffect(c)
+	--Destroy Attack Position monsters
+	local e4=Effect.CreateEffect(c)
 	e4:SetCategory(CATEGORY_DESTROY)
 	e4:SetType(EFFECT_TYPE_QUICK_O)
 	e4:SetCode(EVENT_FREE_CHAIN)
@@ -16,8 +17,8 @@ local e4=Effect.CreateEffect(c)
 	e4:SetTarget(s.sptg)
 	e4:SetOperation(s.spop)
 	c:RegisterEffect(e4,false,REGISTER_FLAG_DETACH_XMAT)
-	---	ATK Increase
-local e2=Effect.CreateEffect(c)
+	--ATK Increase
+	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_ATKCHANGE)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
@@ -28,8 +29,8 @@ local e2=Effect.CreateEffect(c)
 	e2:SetTarget(s.target)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
-	--- Draw
-local e3=Effect.CreateEffect(c)
+	--Draw
+	local e3=Effect.CreateEffect(c)
 	e3:SetCategory(CATEGORY_DRAW)
 	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e3:SetCode(EVENT_TO_GRAVE)
@@ -41,8 +42,8 @@ local e3=Effect.CreateEffect(c)
 	e3:SetOperation(s.drop)
 	c:RegisterEffect(e3)
 end
----------------------------------------------------------------
---	destroy atttack position monsters
+s.listed_names={id}
+--destroy
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():CheckRemoveOverlayCard(tp,1,REASON_COST) end
 	e:GetHandler():RemoveOverlayCard(tp,1,1,REASON_COST)
@@ -71,7 +72,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 		c:RegisterEffect(e2)
 	end
 end
---	atk increase
+--atk up
 function s.tgcfilter(c,tp)
 	return c:IsFaceup() and c:GetLevel()==7 or c:GetLevel()==8 and c:IsRace(RACE_DRAGON) and c:IsControler(tp)
 end
@@ -97,7 +98,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 		tc:RegisterEffect(e1)
 	end
 end
--- draw
+--draw
 function s.cfilter(c)
 	return c:IsRace(RACE_DRAGON) and c:IsPreviousLocation(LOCATION_MZONE+LOCATION_SZONE+LOCATION_HAND+LOCATION_GRAVE)
 end
