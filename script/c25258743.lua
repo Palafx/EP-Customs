@@ -28,7 +28,7 @@ function s.initial_effect(c)
 	e2:SetTarget(s.target)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
- --Change ATK & DEF
+	--Change ATK & DEF
 	local e3=Effect.CreateEffect(c)
 	e3:SetCategory(CATEGORY_ATKCHANGE)
 	e3:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
@@ -40,7 +40,7 @@ function s.initial_effect(c)
 	e3:SetOperation(s.op)
 	c:RegisterEffect(e3)
 end
- s.listed_names={25258742}
+s.listed_names={25258741,25258742}
 --special summon from pend zone
 function s.cfilter(c,tp)
 	return c:IsFaceup() and (c:IsCode(25258741) or c:IsCode(25258742)) and c:IsSummonPlayer(tp)

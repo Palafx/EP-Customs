@@ -3,42 +3,42 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	Pendulum.AddProcedure(c,false)
-  --Activate
+	--Activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetCountLimit(1,id)
+	e1:SetCountLimit(1,{id,1})
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
-  --Special Summon from Deck
-  local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,0))
+	--Special Summon from Deck
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_PLAYER_TARGET)
 	e2:SetCode(EVENT_SUMMON_SUCCESS)
-	e2:SetCountLimit(1,{id,1})
+	e2:SetCountLimit(1,{id,2})
 	e2:SetTarget(s.target)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
 	local e3=e2:Clone()
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-  e3:SetCondition(s.addcon)
+	e3:SetCondition(s.addcon)
 	c:RegisterEffect(e3)
-  --Search
-  local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(id,0))
+	--Search
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,2))
 	e4:SetCategory(CATEGORY_REMOVE)
 	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
-  e4:SetCondition(s.excon)
+	e4:SetCondition(s.excon)
 	e4:SetRange(LOCATION_MZONE)
-  e4:SetCountLimit(1,{id,2})
+	e4:SetCountLimit(1,{id,3})
 	e4:SetTarget(s.tetg)
 	e4:SetOperation(s.teop)
 	c:RegisterEffect(e4)
 end
-s.listed_names={25258742}
+s.listed_names={25258742,25258744}
 --place ram on pzone
 function s.pcfilter(c,code)
 	return c:IsCode(code) and not c:IsForbidden()
@@ -47,7 +47,6 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if not Duel.CheckLocation(tp,LOCATION_PZONE,0) and not Duel.CheckLocation(tp,LOCATION_PZONE,1) then return end
 	local g=Duel.GetMatchingGroup(s.pcfilter,tp,LOCATION_DECK,0,nil,25258744)
 	if #g>0 and Duel.SelectYesNo(tp,aux.Stringid(id,0)) then
-		--Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOFIELD)
 		local tc=Duel.GetFirstMatchingCard(s.pcfilter,tp,LOCATION_DECK,0,nil,25258744)
 		if not tc then return end
 		Duel.MoveToField(tc,tp,tp,LOCATION_PZONE,POS_FACEUP,true)

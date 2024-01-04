@@ -1,11 +1,13 @@
---Heliopolis
+--Heliopolis, City of the Sun
 --Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--Activate
 	local e0=Effect.CreateEffect(c)
+	e0:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e0:SetType(EFFECT_TYPE_ACTIVATE)
 	e0:SetCode(EVENT_FREE_CHAIN)
+	e0:SetOperation(s.activate)
 	c:RegisterEffect(e0)
 	--Opponent cannot target monsters with 0 original ATK with card effects
 	local e1=Effect.CreateEffect(c)
@@ -38,6 +40,20 @@ function s.initial_effect(c)
 	e3:SetTarget(s.sptg)
 	e3:SetOperation(s.spop)
 	c:RegisterEffect(e3)
+end
+s.listed_names={13140300}
+--search
+function s.thfilter(c)
+	return c:IsCode(13140300) and c:IsAbleToHand()
+end
+function s.activate(e,tp,eg,ep,ev,re,r,rp)
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	local g=Duel.GetMatchingGroup(s.thfilter,tp,LOCATION_DECK,0,nil)
+	if #g>0 and Duel.SelectYesNo(tp,aux.Stringid(id,3)) then
+		local sg=Duel.GetFirstMatchingCard(s.thfilter,tp,LOCATION_DECK,0,nil)
+		Duel.SendtoHand(sg,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,sg)
+	end
 end
 --cannot target
 function s.filter(c)

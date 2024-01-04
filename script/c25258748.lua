@@ -9,16 +9,15 @@ function s.initial_effect(c)
 	--Prevent battle destruction
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
-	e2:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
+	e2:SetCode(EFFECT_INDESTRUCTABLE_COUNT)
 	e2:SetRange(LOCATION_SZONE)
 	e2:SetTargetRange(LOCATION_MZONE,0)
-	e2:SetCountLimit(1)
 	e2:SetTarget(s.indtg)
-	e2:SetValue(1)
+	e2:SetCountLimit(1)
+	e2:SetValue(s.valcon)
 	c:RegisterEffect(e2)
 	--Prevent effect destruction
 	local e3=e2:Clone()
-	e3:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
 	e3:SetValue(s.indval)
 	c:RegisterEffect(e3)
 	--Search
@@ -35,8 +34,13 @@ end
 function s.indtg(e,c)
 	return c:IsType(TYPE_PENDULUM) and Card.ListsCode(c,25258742)
 end
-function s.indval(e,re,rp)
-	return rp==1-e:GetHandlerPlayer()
+function s.indval(e,re,r,rp)
+	if Duel.IsTurnPlayer(1-e:GetHandlerPlayer()) and (r&REASON_EFFECT)~=0 then
+		return 1
+	else return 0 end
+end
+function s.valcon(e,re,r,rp)
+	return (r&REASON_BATTLE)~=0
 end
 --search
 function s.filter(c)

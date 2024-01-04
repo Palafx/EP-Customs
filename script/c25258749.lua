@@ -10,7 +10,7 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
-  --Cannot target
+	--Cannot target
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)
 	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -22,7 +22,7 @@ function s.initial_effect(c)
 	--Cannot destroy
 	local e3=e2:Clone()
 	e3:SetCode(EFFECT_INDESTRUCTABLE_EFFECT)
-	c:RegisterEffect(e3)
+	c:RegisterEffect(e1)
 	--Search
 	local e4=Effect.CreateEffect(c)
 	e4:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -35,26 +35,23 @@ function s.initial_effect(c)
 	e4:SetOperation(s.operation)
 	c:RegisterEffect(e4)
 end
- s.listed_names={25258742}
+s.listed_names={25258742,25258746}
 --search
-function s.thfilter(c,code)
-  return c:IsCode(code) and c:IsAbleToHand()
+function s.thfilter(c)
+	return c:IsCode(25258746) and c:IsAbleToHand()
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
-  if not e:GetHandler():IsRelateToEffect(e) then return end
-  local g=Duel.GetMatchingGroup(s.thfilter,tp,LOCATION_DECK,0,nil,25258746)
-  if #g>0 and Duel.SelectYesNo(tp,aux.Stringid(id,0)) then
-    local sg=Duel.GetFirstMatchingCard(s.thfilter,tp,LOCATION_DECK,0,nil,25258746)
-    Duel.SendtoHand(sg,nil,REASON_EFFECT)
-    Duel.ConfirmCards(1-tp,sg)
-  end
+	if not e:GetHandler():IsRelateToEffect(e) then return end
+	local g=Duel.GetMatchingGroup(s.thfilter,tp,LOCATION_DECK,0,nil)
+	if #g>0 and Duel.SelectYesNo(tp,aux.Stringid(id,0)) then
+		local sg=Duel.GetFirstMatchingCard(s.thfilter,tp,LOCATION_DECK,0,nil)
+		Duel.SendtoHand(sg,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,sg)
+	end
 end
 --indestructible
-function s.ccfilter(c,code)
-	return c:IsFaceup() and c:IsCode(code)
-end
 function s.indcon(e,tp,eg,ep,ev,re,r,rp)
-	return Duel.IsExistingMatchingCard(s.ccfilter,tp,LOCATION_ONFIELD,0,1,nil,25258746)
+	return Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsCode,25258746),e:GetHandlerPlayer(),LOCATION_ONFIELD,0,1,nil)
 end
 --search when pend
 function s.cfilter(c,tp)
