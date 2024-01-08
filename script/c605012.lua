@@ -16,9 +16,9 @@ function s.initial_effect(c)
 	e3:SetCategory(CATEGORY_DISABLE+CATEGORY_DESTROY)
 	e3:SetType(EFFECT_TYPE_QUICK_O)
 	e3:SetCode(EVENT_CHAINING)
-	e3:SetRange(LOCATION_MZONE|LOCATION_GRAVE)
+	e3:SetRange(LOCATION_HAND)
 	e3:SetCondition(s.discon)
-	e3:SetCost(aux.bfgcost)
+	e3:SetCost(s.negcost)
 	e3:SetTarget(s.distg)
 	e3:SetOperation(s.disop)
 	c:RegisterEffect(e3)
@@ -54,6 +54,10 @@ function s.matop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --Negate
+function s.negcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return e:GetHandler():IsDiscardable() end
+	Duel.SendtoGrave(e:GetHandler(),REASON_COST+REASON_DISCARD)
+end
 function s.tfilter(c,tp)
 	return c:IsOnField() and c:IsControler(tp)
 end
