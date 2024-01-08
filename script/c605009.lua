@@ -5,7 +5,7 @@ function s.initial_effect(c)
 c:EnableReviveLimit()
 	--Link Summon procedure
 	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsType,TYPE_EFFECT),2)
-	--spsummon
+	--On summon
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
@@ -42,9 +42,9 @@ c:EnableReviveLimit()
 	e3:SetOperation(s.thop)
 	c:RegisterEffect(e3)
 end
-s.listed_names={TOKEN_LINK}
+s.listed_names={605013}
 function s.thfilter(c)
-	return c:IsRace(RACE_CYBERSE) and (c:IsLevel(5) or c:IsLevel(6)) and c:IsAbleToHand()
+	return c:IsRace(RACE_CYBERSE) and c:IsLevelAbove(5) and c:IsAbleToHand()
 end
 function s.nsfilter(c)
 	return c:IsRace(RACE_CYBERSE) and c:IsSummonable(true,nil)
@@ -54,7 +54,7 @@ function s.tkcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.tktg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsPlayerCanSpecialSummonMonster(tp,TOKEN_LINK,0,TYPES_TOKEN,0,0,1,RACE_CYBERSE,ATTRIBUTE_LIGHT) 
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,605013,0,TYPES_TOKEN,0,0,2,RACE_CYBERSE,ATTRIBUTE_LIGHT) 
 		and Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end
 	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
@@ -62,8 +62,8 @@ function s.tktg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.tkop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0 
-		and Duel.IsPlayerCanSpecialSummonMonster(tp,TOKEN_LINK,0,TYPES_TOKEN,0,0,1,RACE_CYBERSE,ATTRIBUTE_LIGHT) then
-		local token=Duel.CreateToken(tp,TOKEN_LINK)
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,605013,0,TYPES_TOKEN,0,0,2,RACE_CYBERSE,ATTRIBUTE_LIGHT) then
+		local token=Duel.CreateToken(tp,605013)
 		if Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP) then
 			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 			local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK,0,1,1,nil)
@@ -71,11 +71,13 @@ function s.tkop(e,tp,eg,ep,ev,re,r,rp)
 				Duel.BreakEffect()
 				Duel.SendtoHand(g,tp,REASON_EFFECT)
 				Duel.ConfirmCards(1-tp,g)
-				Duel.BreakEffect()
-				Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SUMMON)
-				local tc=Duel.SelectMatchingCard(tp,s.nsfilter,tp,LOCATION_HAND,0,1,1,nil):GetFirst()
-				if tc then
-					Duel.Summon(tp,tc,true,nil)
+				if Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
+					Duel.BreakEffect()
+					Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SUMMON)
+					local tc=Duel.SelectMatchingCard(tp,s.nsfilter,tp,LOCATION_HAND,0,1,1,nil):GetFirst()
+					if tc then
+						Duel.Summon(tp,tc,true,nil)
+					end
 				end
 			end
 		end
