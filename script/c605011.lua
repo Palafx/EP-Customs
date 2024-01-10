@@ -72,17 +72,16 @@ function s.tkop(e,tp,eg,ep,ev,re,r,rp)
 				Duel.BreakEffect()
 				Duel.SendtoHand(g,tp,REASON_EFFECT)
 				Duel.ConfirmCards(1-tp,g)
-				if Duel.SelectYesNo(tp,aux.Stringid(id,0)) then
+				local sg1=Duel.GetMatchingGroup(s.nsfilter,tp,LOCATION_HAND+LOCATION_MZONE,0,nil)
+				if #sg1>0 and Duel.SelectYesNo(tp,aux.Stringid(id,0)) then
 					Duel.BreakEffect()
+					Duel.ShuffleHand(tp)
 					Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SUMMON)
-					local tc=Duel.SelectMatchingCard(tp,s.nsfilter,tp,LOCATION_HAND,0,1,1,nil):GetFirst()
-					if tc then
-						Duel.Summon(tp,tc,true,nil)
-					end
+					local sg2=sg1:Select(tp,1,1,nil):GetFirst()
+					Duel.Summon(tp,sg2,true,nil)
 				end
 			end
 		end
-		
 	end
 end
 function s.cfilter(c,tp)

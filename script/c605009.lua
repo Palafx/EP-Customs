@@ -71,13 +71,13 @@ function s.tkop(e,tp,eg,ep,ev,re,r,rp)
 				Duel.BreakEffect()
 				Duel.SendtoHand(g,tp,REASON_EFFECT)
 				Duel.ConfirmCards(1-tp,g)
-				if Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
+				local sg1=Duel.GetMatchingGroup(s.nsfilter,tp,LOCATION_HAND+LOCATION_MZONE,0,nil)
+				if #sg1>0 and Duel.SelectYesNo(tp,aux.Stringid(id,1)) then
 					Duel.BreakEffect()
+					Duel.ShuffleHand(tp)
 					Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SUMMON)
-					local tc=Duel.SelectMatchingCard(tp,s.nsfilter,tp,LOCATION_HAND,0,1,1,nil):GetFirst()
-					if tc then
-						Duel.Summon(tp,tc,true,nil)
-					end
+					local sg2=sg1:Select(tp,1,1,nil):GetFirst()
+					Duel.Summon(tp,sg2,true,nil)
 				end
 			end
 		end
@@ -107,7 +107,7 @@ function s.thcon(e,tp,eg,ep,ev,re,r,rp)
 	return ep==tp and (r&REASON_BATTLE+REASON_EFFECT)~=0
 end
 function s.thfilter2(c,atk)
-	return c:IsRace(RACE_CYBERSE) and (c:IsAttackBelow(atk*2) or c:IsDefenseBelow(atk*2)) and c:IsAbleToHand()
+	return c:IsRace(RACE_CYBERSE) and c:IsAttackBelow(atk*2) and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter2,tp,LOCATION_DECK|LOCATION_GRAVE,0,1,nil,ev) end
