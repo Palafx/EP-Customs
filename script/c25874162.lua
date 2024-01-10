@@ -2,17 +2,17 @@
 --Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
 local s,id=GetID()
 function s.initial_effect(c)
---Fusion Summon
+	--Fusion Summon
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,false,false,89631139,74677422)
---Must first be Fusion Summoned
+	--Must first be Fusion Summoned
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
 	e1:SetCode(EFFECT_SPSUMMON_CONDITION)
 	e1:SetValue(s.splimit)
 	c:RegisterEffect(e1)
---Is also treated as LIGHT
+	--Is also treated as LIGHT
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)
 	e2:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -20,7 +20,7 @@ function s.initial_effect(c)
 	e2:SetRange(LOCATION_MZONE+LOCATION_GRAVE)
 	e2:SetValue(ATTRIBUTE_LIGHT)
 	c:RegisterEffect(e2)
---Untargetable
+	--Untargetable
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(3060)
 	e3:SetType(EFFECT_TYPE_SINGLE)
@@ -29,7 +29,7 @@ function s.initial_effect(c)
 	e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
 	e3:SetValue(aux.tgoval)
 	c:RegisterEffect(e3)
---Indestructible
+	--Indestructible
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE)
 	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
@@ -37,7 +37,7 @@ function s.initial_effect(c)
 	e4:SetRange(LOCATION_MZONE)
 	e4:SetValue(s.indval)
 	c:RegisterEffect(e4)
---Banish
+	--Banish
 	local e5=Effect.CreateEffect(c)
 	e5:SetDescription(aux.Stringid(id,0))
 	e5:SetCategory(CATEGORY_REMOVE)
@@ -58,7 +58,8 @@ function s.initial_effect(c)
 	e6:SetOperation(s.spop)
 	c:RegisterEffect(e6)
 end
-s.material_setcode={0x3b}
+s.listed_names={CARD_BLUEEYES_W_DRAGON,CARD_REDEYES_B_DRAGON}
+s.material_setcode={0x3b,0xdd}
 --fusion material
 function s.splimit(e,se,sp,st)
 	return not e:GetHandler():IsLocation(LOCATION_EXTRA) or aux.fuslimit(e,se,sp,st)
