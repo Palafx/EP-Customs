@@ -1,7 +1,7 @@
---- Adaptive Trait - Armor Plates
+--Adaptive Trait - Armor Plates
 local s,id=GetID()
 function s.initial_effect(c)
---activate and equip
+	--activate and equip
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_EQUIP)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
@@ -14,7 +14,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.eqtg)
 	e1:SetOperation(s.eqop)
 	c:RegisterEffect(e1)
---draw
+	--draw
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_DRAW)
@@ -26,6 +26,8 @@ function s.initial_effect(c)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
 end
+s.listed_names={id}
+s.listed_series={0x499}
 --equip
 function s.eqfil(c)
 	return c:IsFaceup() and c:IsSetCard(0x499)
@@ -71,8 +73,9 @@ function s.eqlimit(e,c)
 end
 --draw
 function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return e:GetHandler():IsDiscardable() end
-	Duel.SendtoGrave(e:GetHandler(),REASON_COST+REASON_DISCARD)
+	local c=e:GetHandler()
+	if chk==0 then return c:IsAbleToGraveAsCost() end
+	Duel.SendtoGrave(c,REASON_COST)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
