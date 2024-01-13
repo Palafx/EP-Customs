@@ -36,6 +36,9 @@ s.listed_series={0x499}
 function s.counterfilter(c)
 	return c:IsSetCard(0x499)
 end
+function s.splimit(e,c)
+	return not c:IsSetCard(0x499)
+end
 --increase atk
 function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x499)
