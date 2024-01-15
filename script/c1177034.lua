@@ -28,10 +28,18 @@ end
 s.listed_names={id}
 s.listed_series={0x499}
 --special summon
+function s.spcfilter(c)
+	return c:IsFaceup() and c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)
+end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.CheckLPCost(tp,2000) and Duel.CheckReleaseGroupCost(tp,nil,1,false,nil,nil) end
-	local g=Duel.SelectReleaseGroupCost(tp,nil,1,1,false,nil,nil)
-	Duel.Release(g,REASON_COST)
+	if Duel.IsExistingMatchingCard(s.spcfilter,tp,LOCATION_MZONE,0,1,nil) then
+		local g=Duel.SelectReleaseGroupCost(tp,s.spcfilter,1,1,false,nil,nil,tp)
+		Duel.Release(g,REASON_COST)
+	else
+		local g=Duel.SelectReleaseGroupCost(tp,nil,1,1,false,nil,nil)
+		Duel.Release(g,REASON_COST)
+	end
 	Duel.PayLPCost(tp,2000)
 end
 function s.filter(c,e,tp)
@@ -51,7 +59,6 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.SpecialSummon(tc,SUMMON_TYPE_FUSION,tp,tp,false,false,POS_FACEUP)~=0 then
 		--Destroy it during end phase
 		aux.DelayedOperation(tc,PHASE_END,id,e,tp,function(ag) Duel.Destroy(ag,REASON_EFFECT) end,nil,0)
-																--Duel.SendtoDeck(tc,nil,2,REASON_EFFECT)
 	end
 end
 --draw

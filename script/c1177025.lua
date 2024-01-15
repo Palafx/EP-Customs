@@ -33,12 +33,6 @@ function s.initial_effect(c)
 end
 s.listed_names={id}
 s.listed_series={0x499}
-function s.counterfilter(c)
-	return c:IsSetCard(0x499)
-end
-function s.splimit(e,c)
-	return not c:IsSetCard(0x499)
-end
 --increase atk
 function s.filter(c)
 	return c:IsFaceup() and c:IsSetCard(0x499)
@@ -65,6 +59,12 @@ function s.damop(e,tp,eg,ep,ev,re,r,rp)
 	ec:UpdateDefense(100,nil,c)
 end
 --draw
+function s.counterfilter(c)
+	return c:IsSetCard(0x499)
+end
+function s.splimit(e,c)
+	return not c:IsSetCard(0x499)
+end
 function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsDiscardable() and Duel.GetCustomActivityCount(id,tp,ACTIVITY_SPSUMMON)==0 end
 	Duel.SendtoGrave(e:GetHandler(),REASON_COST+REASON_DISCARD)

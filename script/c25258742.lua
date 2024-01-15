@@ -99,8 +99,8 @@ function s.spfilter(c,e,tp,mmz_chk)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local mmz_chk=Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-	if chk==0 then return Duel.IsExistingMatchingCard(e:GetHandler(),tp,LOCATION_EXTRA|LOCATION_GRAVE,0,1,nil,e,tp,mmz_chk) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA|LOCATION_GRAVE)
+	if chk==0 then return end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,tp,LOCATION_EXTRA|LOCATION_GRAVE)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	local mmz_chk=Duel.GetLocationCount(tp,LOCATION_MZONE)>0
