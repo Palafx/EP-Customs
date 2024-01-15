@@ -47,7 +47,7 @@ function s.efilter(c,tp)
 	return c:IsFaceup() and c:IsSetCard(0x499) and Duel.IsExistingMatchingCard(s.eqfilter,tp,LOCATION_HAND+LOCATION_GRAVE,0,1,nil,c)
 end
 function s.eqfilter(c,tc)
-	return not c:IsForbidden() and (c:IsEquipSpell() or c:IsType()==TYPE_TRAP) and c:IsSetCard(0x499)
+	return not c:IsForbidden() and (c:IsEquipSpell() or c:IsNormalTrap()) and c:IsSetCard(0x499)
 end
 function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsControler(tp) and chkc:IsLocation(LOCATION_MZONE) and s.efilter(chkc,tp) end
