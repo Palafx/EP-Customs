@@ -23,6 +23,16 @@ function s.initial_effect(c)
 	e2:SetTarget(s.eqtg)
 	e2:SetOperation(s.eqop)
 	c:RegisterEffect(e2)
+	--cannot be target
+	local e3=Effect.CreateEffect(c)
+	e3:SetType(EFFECT_TYPE_FIELD)
+	e3:SetCode(EFFECT_CANNOT_BE_EFFECT_TARGET)
+	e3:SetRange(LOCATION_FZONE)
+	e3:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+	e3:SetTargetRange(LOCATION_MZONE,0)
+	e3:SetTarget(s.etarget)
+	e3:SetValue(s.evalue)
+	c:RegisterEffect(e3)
 end
 s.listed_series={0x499}
 --search
@@ -75,4 +85,11 @@ function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.eqlimit(e,c)
 	return c==e:GetLabelObject()
+end
+--cannot target
+function s.etarget(e,c)
+	return c:IsSetCard(0x499) and c:IsMonster()
+end
+function s.evalue(e,re,rp)
+	return (re:IsActiveType(TYPE_SPELL+TYPE_TRAP) or re:IsSpellTrap()) and re:GetOwnerPlayer()~=e:GetHandlerPlayer()
 end
