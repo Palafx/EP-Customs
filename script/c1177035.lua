@@ -91,5 +91,5 @@ function s.etarget(e,c)
 	return c:IsSetCard(0x499) and c:IsMonster()
 end
 function s.evalue(e,re,rp)
-	return (re:IsActiveType(TYPE_SPELL+TYPE_TRAP) or re:IsSpellTrap()) and re:GetOwnerPlayer()~=e:GetHandlerPlayer()
+	return (re:IsActiveType(TYPE_SPELL+TYPE_TRAP) or re:IsType(TYPE_SPELL+TYPE_TRAP)) and re:GetOwnerPlayer()~=e:GetHandlerPlayer()
 end

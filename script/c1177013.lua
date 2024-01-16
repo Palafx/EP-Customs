@@ -1,10 +1,12 @@
---Aequinox, The Adaptive King Of The Peak
+--Aequinox, The Adaptive King Of The Summit
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	c:SetUniqueOnField(1,0,aux.FilterBoolFunction(s.unifilter),LOCATION_MZONE)
-	--fusion material
+	--Fusion material
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,true,true,s.ffilter1,s.ffilter2)
+	--Cannot activate Spell/Traps
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_FIELD)
 	e4:SetCode(EFFECT_CANNOT_ACTIVATE)
@@ -14,6 +16,7 @@ function s.initial_effect(c)
 	e4:SetValue(s.limval)
 	c:RegisterEffect(e4)
 end
+s.listed_series={0x499}
 --unique
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)

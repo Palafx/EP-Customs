@@ -1,10 +1,12 @@
 --Cor, The Adaptive King Of Geysers
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
--- fusion summon
+	c:SetUniqueOnField(1,0,aux.FilterBoolFunction(s.unifilter),LOCATION_MZONE)
+	--Fusion Materials
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,true,true,s.ffilter1,s.ffilter2)
--- return to deck
+	--To top of Deck
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TODECK+CATEGORY_COIN)
@@ -14,14 +16,19 @@ function s.initial_effect(c)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
-  local e2=e1:Clone()
-  e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
-  c:RegisterEffect(e2)
-  local e3=e1:Clone()
-  e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-  c:RegisterEffect(e3)
+	local e2=e1:Clone()
+	e2:SetCode(EVENT_FLIP_SUMMON_SUCCESS)
+	c:RegisterEffect(e2)
+	local e3=e1:Clone()
+	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+	c:RegisterEffect(e3)
 end
--- return to deck
+s.listed_series={0x499}
+--unique
+function s.unifilter(c)
+	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)
+end
+--to deck
 s.toss_coin=true
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
   local g=eg:Filter(aux.AND(Card.IsSummonPlayer,Card.IsAbleToDeck),nil,1-tp)
@@ -37,12 +44,12 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
   local g=eg:Filter(s.filter,nil,e,tp)
   if #g>0 then
     --announce coin and return
-    if Duel.AnnounceCoin(tp)==Duel.TossCoin(tp,1)then
+    if Duel.TossCoin(tp,1)==COIN_HEADS then
       Duel.SendtoDeck(g,nil,0,REASON_EFFECT)
     end
   end
 end
--- fusion materials
+--fusion materials
 function s.ffilter1(c,fc,sumtype,tp)
 	return c:IsAttribute(ATTRIBUTE_WATER,fc,sumtype,tp) and c:IsSetCard(0x499,fc,sumtype,tp)
 end

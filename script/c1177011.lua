@@ -1,11 +1,12 @@
---Elicaphaz, The Adaptive King Of The Sunflare
+--Elicaphaz, The Adaptive Queen Of The Sunflare
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	c:SetUniqueOnField(1,0,aux.FilterBoolFunction(s.unifilter),LOCATION_MZONE)
-	--fusion material
+	--Fusion Material
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,true,true,s.ffilter1,s.ffilter2)
-	--negate
+	--Negate
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_NEGATE+CATEGORY_DESTROY)
@@ -18,7 +19,7 @@ function s.initial_effect(c)
 	e2:SetTarget(s.distg)
 	e2:SetOperation(s.disop)
 	c:RegisterEffect(e2)
-	--cannot attack
+	--Cannot attack
 	local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_FIELD)
 	e3:SetCode(EFFECT_CANNOT_ATTACK_ANNOUNCE)
@@ -26,6 +27,7 @@ function s.initial_effect(c)
 	e3:SetTargetRange(0,LOCATION_MZONE)
 	c:RegisterEffect(e3)
 end
+s.listed_series={0x499}
 --unique
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)

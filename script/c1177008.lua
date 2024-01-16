@@ -1,4 +1,4 @@
---Wither, The Adaptive King Of Decay
+--Wither, The Adaptive Queen Of Decay
 --Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
@@ -17,6 +17,7 @@ function s.initial_effect(c)
 	e1:SetValue(LOCATION_REMOVED)
 	c:RegisterEffect(e1)
 end
+s.listed_series={0x499}
 --unique
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)

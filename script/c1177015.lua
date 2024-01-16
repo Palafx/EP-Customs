@@ -1,11 +1,12 @@
---Botan, The Adaptive King Of Plasma
+--Botan, The Adaptive Queen Of Plasma
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	c:SetUniqueOnField(1,0,aux.FilterBoolFunction(s.unifilter),LOCATION_MZONE)
 	--fusion material
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,true,true,s.ffilter1,s.ffilter2)
---cannot draw
+	--Cannot add or draw
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
@@ -21,6 +22,7 @@ function s.initial_effect(c)
 	e3:SetTargetRange(0,LOCATION_DECK)
 	c:RegisterEffect(e3)
 end
+s.listed_series={0x499}
 --unique
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)

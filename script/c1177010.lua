@@ -1,11 +1,12 @@
---Dashat, The Adaptive King Of Ashes
+--Dashat, The Adaptive Queen Of Ashes
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	c:SetUniqueOnField(1,0,aux.FilterBoolFunction(s.unifilter),LOCATION_MZONE)
-	--fusion material
+	--Fusion material
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,true,true,s.ffilter1,s.ffilter2)
-	--prevent activation
+	--Prevent activation
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
@@ -15,6 +16,7 @@ function s.initial_effect(c)
 	e2:SetValue(s.aclimit)
 	c:RegisterEffect(e2)
 end
+s.listed_series={0x499}
 --unique
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)

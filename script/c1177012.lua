@@ -3,10 +3,10 @@
 local s,id=GetID()
 function s.initial_effect(c)
 	c:SetUniqueOnField(1,0,aux.FilterBoolFunction(s.unifilter),LOCATION_MZONE)
---fusion material
+	--Fusion Material
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,true,true,s.ffilter1,s.ffilter2)
---mill
+	--Mill
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
 	e5:SetCode(EVENT_CHAINING)
@@ -22,6 +22,7 @@ function s.initial_effect(c)
 	e6:SetOperation(s.damop)
 	c:RegisterEffect(e6)
 end
+s.listed_names={id}s.listed_series={0x499}
 --unique
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)

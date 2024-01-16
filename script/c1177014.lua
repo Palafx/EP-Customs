@@ -1,11 +1,12 @@
---Mirage, The Adaptive Queen Of Blizzards
+--Mirage, The Adaptive King Of Blizzards
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	c:SetUniqueOnField(1,0,aux.FilterBoolFunction(s.unifilter),LOCATION_MZONE)
 	--fusion material
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,true,true,s.ffilter1,s.ffilter2)
-		--cannot trigger
+	--Cannot activate monster effects
 	local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_FIELD)
 	e3:SetCode(EFFECT_CANNOT_TRIGGER)
@@ -14,6 +15,7 @@ function s.initial_effect(c)
 	e3:SetTarget(s.target)
 	c:RegisterEffect(e3)
 end
+s.listed_series={0x499}
 --unique
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)
