@@ -6,6 +6,14 @@ function s.initial_effect(c)
 	--Fusion material
 	c:EnableReviveLimit()
 	Fusion.AddProcMix(c,true,true,s.ffilter1,s.ffilter2)
+	--Attribute
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_SINGLE)
+	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e1:SetCode(EFFECT_ADD_ATTRIBUTE)
+	e1:SetRange(LOCATION_MZONE+LOCATION_GRAVE)
+	e1:SetValue(ATTRIBUTE_EARTH)
+	c:RegisterEffect(e1)
 	--Burn after a Summon
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -39,8 +47,21 @@ function s.initial_effect(c)
 	e6:SetCondition(s.damcon)
 	e6:SetOperation(s.damop)
 	c:RegisterEffect(e6)
+	--damage conversion
+	local e7=Effect.CreateEffect(c)
+	e7:SetType(EFFECT_TYPE_FIELD)
+	e7:SetCode(EFFECT_REVERSE_DAMAGE)
+	e7:SetRange(LOCATION_MZONE)
+	e7:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e7:SetTargetRange(1,0)
+	e7:SetValue(s.rev)
+	c:RegisterEffect(e7)
 end
 s.listed_series={0x499}
+s.material_setcode=0x499
+function s.rev(e,re,r,rp,rc)
+	return (r&REASON_EFFECT)~=0
+end
 --unique
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)

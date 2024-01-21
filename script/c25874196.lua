@@ -1,5 +1,5 @@
---- Ihvy the Enchantress
---- Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Ihvy the Enchantress
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
@@ -13,16 +13,16 @@ function s.initial_effect(c)
 	e1:SetTarget(aux.TargetBoolFunction(Card.IsType,TYPE_PENDULUM))
 	e1:SetValue(1)
 	c:RegisterEffect(e1)
-  --Set
-  local e2=Effect.CreateEffect(c)
+	--Set
+	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_PZONE)
 	e2:SetCountLimit(1,id)
 	e2:SetCondition(s.thcon)
 	e2:SetTarget(s.settg)
-  e2:SetOperation(s.setop)
+	e2:SetOperation(s.setop)
 	c:RegisterEffect(e2)
-  --Discard and search
+	--Discard and search
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,0))
 	e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -33,18 +33,18 @@ function s.initial_effect(c)
 	e3:SetTarget(s.target)
 	e3:SetOperation(s.operation)
 	c:RegisterEffect(e3)
-  --Search when Pendulum Summoned
-	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,2))
-	e3:SetCategory(CATEGORY_SEARCH+CATEGORY_TOHAND)
-	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e3:SetProperty(EFFECT_FLAG_DELAY)
-	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e3:SetCountLimit(1,{id,2})
-	e3:SetCondition(s.drcon)
-	e3:SetTarget(s.tga)
-	e3:SetOperation(s.opa)
-	c:RegisterEffect(e3)
+	--Search when Pendulum Summoned
+	local e4=Effect.CreateEffect(c)
+	e4:SetDescription(aux.Stringid(id,2))
+	e4:SetCategory(CATEGORY_SEARCH+CATEGORY_TOHAND)
+	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e4:SetProperty(EFFECT_FLAG_DELAY)
+	e4:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e4:SetCountLimit(1,{id,2})
+	e4:SetCondition(s.drcon)
+	e4:SetTarget(s.tga)
+	e4:SetOperation(s.opa)
+	c:RegisterEffect(e4)
 end
 --set
 function s.thcon(e,tp,eg,ep,ev,re,r,rp)
@@ -96,7 +96,7 @@ function s.drcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.filter1(c,e,tp)
 	local lv=c:GetLevel()
-  local rc=c:GetRace()
+	local rc=c:GetRace()
 	return lv>0 and c:IsFaceup() and Duel.IsExistingMatchingCard(s.filter2,tp,LOCATION_DECK,0,1,nil,lv,rc,e,tp)
 end
 function s.filter2(c,lv,rc,e,tp)
@@ -115,7 +115,7 @@ function s.opa(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 	local g=Duel.SelectMatchingCard(tp,s.filter2,tp,LOCATION_DECK,0,1,1,nil,tc:GetLevel(),tc:GetRace())
 	if #g>0 then
-  Duel.SendtoHand(g,nil,REASON_EFFECT)
-  Duel.ConfirmCards(1-tp,g)
-  end
+		Duel.SendtoHand(g,nil,REASON_EFFECT)
+		Duel.ConfirmCards(1-tp,g)
+	end
 end
