@@ -54,7 +54,16 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
   if #g>0 then
     --announce coin and return
     if Duel.TossCoin(tp,1)==COIN_HEADS then
-      Duel.SendtoDeck(g,nil,0,REASON_EFFECT)
+    	Duel.SendtoDeck(g,nil,0,REASON_EFFECT)
+		else
+			--Cannot attack
+			local e1=Effect.CreateEffect(e:GetHandler())
+			e1:SetDescription(3206)
+			e1:SetProperty(EFFECT_FLAG_CLIENT_HINT)
+			e1:SetType(EFFECT_TYPE_SINGLE)
+			e1:SetCode(EFFECT_CANNOT_ATTACK)
+			e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
+			g:RegisterEffect(e1)
     end
   end
 end
