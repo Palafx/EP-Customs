@@ -8,9 +8,9 @@ function s.initial_effect(c)
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_FUSION_SUMMON)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetCost(s.cost)
-	e1:SetTarget(s.target)
-	e1:SetOperation(s.activate)
+	e1:SetCost(s.spcost)
+	e1:SetTarget(s.sptg)
+	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
 	--draw
 	local e3=Effect.CreateEffect(c)
@@ -19,9 +19,9 @@ function s.initial_effect(c)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_HAND)
 	e3:SetCountLimit(1,id)
-	e3:SetCost(s.thcost)
-	e3:SetTarget(s.target)
-	e3:SetOperation(s.operation)
+	e3:SetCost(s.drcost)
+	e3:SetTarget(s.drtg)
+	e3:SetOperation(s.drop)
 	c:RegisterEffect(e3)
 	Duel.AddCustomActivityCounter(id,ACTIVITY_SPSUMMON,s.counterfilter)
 end
@@ -31,7 +31,7 @@ s.listed_series={0x499}
 function s.spcfilter(c)
 	return c:IsFaceup() and c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)
 end
-function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.CheckLPCost(tp,2000) and Duel.CheckReleaseGroupCost(tp,nil,1,false,nil,nil) end
 	if Duel.IsExistingMatchingCard(s.spcfilter,tp,LOCATION_MZONE,0,1,nil) then
 		local g=Duel.SelectReleaseGroupCost(tp,s.spcfilter,1,1,false,nil,nil,tp)
@@ -42,24 +42,45 @@ function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	end
 	Duel.PayLPCost(tp,2000)
 end
-function s.filter(c,e,tp)
-	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499) and Duel.GetLocationCountFromEx(tp,tp,nil,c)>0
-		and c:IsCanBeSpecialSummoned(e,SUMMON_TYPE_FUSION,tp,false,false) and c:CheckFusionMaterial()
+function s.spfilter(c,e,tp)
+	return c:IsSetCard(0x499) and c:IsMonster() and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsPublic()
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_EXTRA,0,1,nil,e,tp) end
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_EXTRA)
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local rvg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_EXTRA,0,nil,e,tp)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and rvg:GetClassCount(Card.GetCode)>=3 end
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,0,LOCATION_EXTRA)
 end
-function s.activate(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-	local g=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_EXTRA,0,1,1,nil,e,tp)
-	local tc=g:GetFirst()
-	if not tc then return end
-	tc:SetMaterial(nil)
-	if Duel.SpecialSummon(tc,SUMMON_TYPE_FUSION,tp,tp,false,false,POS_FACEUP)~=0 then
-		--Destroy it during end phase
-		aux.DelayedOperation(tc,PHASE_END,id,e,tp,function(ag) Duel.Destroy(ag,REASON_EFFECT) end,nil,0)
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local fid=c:GetFieldID()
+	local rvg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_EXTRA,0,nil,e,tp)
+	local rg=aux.SelectUnselectGroup(rvg,e,tp,3,3,aux.dncheck,1,tp,HINTMSG_CONFIRM)
+	Duel.ConfirmCards(1-tp,rg)
+	local tg=rg:RandomSelect(1-tp,1)
+	local tc=tg:GetFirst()
+	if tc and tc:IsCanBeSpecialSummoned(e,0,tp,false,false) then
+		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
+		tc:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1,fid)
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+		e1:SetCode(EVENT_PHASE+PHASE_END)
+		e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
+		e1:SetCountLimit(1)
+		e1:SetLabel(fid)
+		e1:SetLabelObject(tc)
+		e1:SetCondition(s.descon)
+		e1:SetOperation(s.desop)
+		e1:SetReset(RESET_PHASE+PHASE_END)
+		Duel.RegisterEffect(e1,tp)
 	end
+end 
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+	local tc=e:GetLabelObject()
+	return tc:GetFlagEffectLabel(id)==e:GetLabel()
+end
+function s.desop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=e:GetLabelObject()
+	Duel.Destroy(tc,REASON_EFFECT)
 end
 --draw
 function s.counterfilter(c)
@@ -68,7 +89,7 @@ end
 function s.splimit(e,c)
 	return not c:IsSetCard(0x499)
 end
-function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.drcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsDiscardable() and Duel.GetCustomActivityCount(id,tp,ACTIVITY_SPSUMMON)==0 end
 	Duel.SendtoGrave(e:GetHandler(),REASON_COST+REASON_DISCARD)
 	local e1=Effect.CreateEffect(e:GetHandler())
@@ -86,13 +107,13 @@ function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	e2:SetTargetRange(1,0)
 	Duel.RegisterEffect(e2,tp)
 end
-function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.SetTargetPlayer(tp)
 	Duel.SetTargetParam(1)
 	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
 end
-function s.operation(e,tp,eg,ep,ev,re,r,rp)
+function s.drop(e,tp,eg,ep,ev,re,r,rp)
 	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
 	Duel.Draw(p,d,REASON_EFFECT)
 end
