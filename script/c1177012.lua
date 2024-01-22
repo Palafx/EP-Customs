@@ -36,7 +36,7 @@ function s.damcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.damop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_CARD,0,id)
-	Duel.DiscardDeck(1-tp,2,REASON_EFFECT)
+	Duel.DiscardDeck(1-tp,3,REASON_EFFECT)
 end
 -- fusion materials
 function s.ffilter1(c,fc,sumtype,tp)

@@ -24,6 +24,13 @@ s.listed_series={0x499}
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)
 end
+--fusion materials
+function s.ffilter1(c,fc,sumtype,tp)
+	return c:IsAttribute(ATTRIBUTE_WATER,fc,sumtype,tp) and c:IsSetCard(0x499,fc,sumtype,tp)
+end
+function s.ffilter2(c,fc,sumtype,tp)
+	return c:IsAttribute(ATTRIBUTE_DARK,fc,sumtype,tp) and c:IsSetCard(0x499,fc,sumtype,tp)
+end
 --discard
 function s.cfilter(c,tp)
 	return c:IsControler(tp) and c:IsPreviousLocation(LOCATION_DECK)
@@ -41,11 +48,4 @@ function s.sop0(e,tp,eg,ep,ev,re,r,rp)
 		local sg=g:RandomSelect(1-tp,1)
 		Duel.SendtoGrave(sg,REASON_EFFECT+REASON_DISCARD)
 	end
-end
---fusion materials
-function s.ffilter1(c,fc,sumtype,tp)
-	return c:IsAttribute(ATTRIBUTE_WATER,fc,sumtype,tp) and c:IsSetCard(0x499,fc,sumtype,tp)
-end
-function s.ffilter2(c,fc,sumtype,tp)
-	return c:IsAttribute(ATTRIBUTE_DARK,fc,sumtype,tp) and c:IsSetCard(0x499,fc,sumtype,tp)
 end
