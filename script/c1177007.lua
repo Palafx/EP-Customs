@@ -44,9 +44,18 @@ function s.initial_effect(c)
 	e5:SetTarget(s.desreptg)
 	e5:SetOperation(s.desrepop)
 	c:RegisterEffect(e5)
+	--Attribute
+	local e6=Effect.CreateEffect(c)
+	e6:SetType(EFFECT_TYPE_SINGLE)
+	e6:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e6:SetCode(EFFECT_ADD_ATTRIBUTE)
+	e6:SetRange(LOCATION_MZONE+LOCATION_GRAVE)
+	e6:SetValue(ATTRIBUTE_FIRE)
+	c:RegisterEffect(e6)
 end
 s.listed_series={0x499}
 s.listed_names={1177099}
+s.material_setcode=0x499
 --Unique
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)

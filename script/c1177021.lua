@@ -8,7 +8,17 @@ function s.initial_effect(c)
 	Fusion.AddProcMix(c,true,true,s.ffilter1,s.ffilter2)
 	--enable counters
 	c:EnableCounterPermit(0x499)
+	c:SetCounterLimit(0x499,5)
 	c:EnableCounterPermit(0xc)
+	c:SetCounterLimit(0xc,5)
+	--Attribute
+	local e0=Effect.CreateEffect(c)
+	e0:SetType(EFFECT_TYPE_SINGLE)
+	e0:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e0:SetCode(EFFECT_ADD_ATTRIBUTE)
+	e0:SetRange(LOCATION_MZONE+LOCATION_GRAVE)
+	e0:SetValue(ATTRIBUTE_WATER)
+	c:RegisterEffect(e0)
 	--add lightning counter when monster is summoned
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -68,6 +78,7 @@ function s.initial_effect(c)
 end
 s.listed_series={0x499}
 s.counter_place_list={0x499,0xc}
+s.material_setcode=0x499
 --unique
 function s.unifilter(c)
 	return c:IsType(TYPE_FUSION) and c:IsSetCard(0x499)
