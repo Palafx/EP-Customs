@@ -15,17 +15,28 @@ function s.initial_effect(c)
 	e1:SetValue(ATTRIBUTE_DARK)
 	c:RegisterEffect(e1)
 	--Discard
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,0))
-	e1:SetCategory(CATEGORY_TOGRAVE)
-	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-	e1:SetProperty(EFFECT_FLAG_DELAY)
-	e1:SetCode(EVENT_TO_HAND)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetCondition(s.scon0)
-	e1:SetTarget(s.stg0)
-	e1:SetOperation(s.sop0)
-	c:RegisterEffect(e1)
+	local e2=Effect.CreateEffect(c)
+	e2:SetDescription(aux.Stringid(id,0))
+	e2:SetCategory(CATEGORY_TOGRAVE)
+	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e2:SetProperty(EFFECT_FLAG_DELAY)
+	e2:SetCode(EVENT_TO_HAND)
+	e2:SetRange(LOCATION_MZONE)
+	e2:SetCondition(s.scon0)
+	e2:SetTarget(s.stg0)
+	e2:SetOperation(s.sop0)
+	c:RegisterEffect(e2)
+	--Send to the GY 1 card from the opponent's hand
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,0))
+	e3:SetCategory(CATEGORY_HANDES+CATEGORY_TOGRAVE)
+	e3:SetType(EFFECT_TYPE_QUICK_O)
+	e3:SetCode(EVENT_FREE_CHAIN)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCountLimit(1)
+	e3:SetTarget(s.target)
+	e3:SetOperation(s.operation)
+	c:RegisterEffect(e3)
 end
 s.listed_series={0x499}
 s.material_setcode=0x499
@@ -57,4 +68,32 @@ function s.sop0(e,tp,eg,ep,ev,re,r,rp)
 		local sg=g:RandomSelect(1-tp,1)
 		Duel.SendtoGrave(sg,REASON_EFFECT+REASON_DISCARD)
 	end
+end
+--send to gy
+function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetFieldGroupCount(tp,LOCATION_HAND,0)>0 and Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)>0 end
+	Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,5))
+	local ac=Duel.SelectOption(tp,aux.Stringid(id,1),aux.Stringid(id,2),aux.Stringid(id,3))
+	e:SetLabel(ac)
+	Duel.SetPossibleOperationInfo(0,CATEGORY_HANDES,nil,0,1-tp,1)
+	Duel.SetPossibleOperationInfo(0,CATEGORY_TOGRAVE,nil,1,PLAYER_ALL,LOCATION_HAND)
+end
+function s.operation(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)>0 and Duel.IsChainDisablable(0)
+		and Duel.SelectYesNo(1-tp,aux.Stringid(id,4)) then
+		Duel.DiscardHand(1-tp,aux.TRUE,1,1,REASON_EFFECT+REASON_DISCARD)
+		return
+	end
+	local ty=TYPE_MONSTER
+	if e:GetLabel()==1 then ty=TYPE_SPELL
+	elseif e:GetLabel()==2 then ty=TYPE_TRAP end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+	local g1=Duel.SelectMatchingCard(tp,Card.IsType,tp,LOCATION_DECK,0,1,1,nil,ty)
+	Duel.Hint(HINT_SELECTMSG,1-tp,HINTMSG_TOGRAVE)
+	local g2=Duel.SelectMatchingCard(1-tp,Card.IsType,1-tp,LOCATION_DECK,0,1,1,nil,ty)
+	g1:Merge(g2)
+	Duel.SendtoGrave(g1,REASON_EFFECT)
+	Duel.BreakEffect()
+	Duel.Draw(tp,1,REASON_EFFECT)
+	Duel.Draw(1-tp,1,REASON_EFFECT)
 end
