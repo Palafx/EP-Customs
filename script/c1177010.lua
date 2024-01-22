@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetCode(EFFECT_ADD_ATTRIBUTE)
 	e1:SetRange(LOCATION_MZONE+LOCATION_GRAVE)
 	e1:SetValue(ATTRIBUTE_WIND)
-	e1:RegisterEffect(e1)
+	c:RegisterEffect(e1)
 	--Prevent activation
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
