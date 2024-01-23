@@ -50,9 +50,9 @@ function s.initial_effect(c)
 	e5:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e5:SetCode(EVENT_PHASE+PHASE_END)
 	e5:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1)
-	e2:SetTarget(s.cftg)
-	e2:SetOperation(s.cfop)
+	e5:SetCountLimit(1)
+	e5:SetTarget(s.cftg)
+	e5:SetOperation(s.cfop)
 	c:RegisterEffect(e5)
 end
 s.listed_series={0x499}
