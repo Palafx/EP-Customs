@@ -43,6 +43,17 @@ function s.initial_effect(c)
 	e4:SetOperation(s.operation)
 	c:RegisterEffect(e4)
 	aux.DoubleSnareValidity(c,LOCATION_MZONE)
+  	--confirm
+	local e5=Effect.CreateEffect(c)
+	e5:SetDescription(aux.Stringid(id,0))
+	e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e5:SetProperty(EFFECT_FLAG_CARD_TARGET)
+	e5:SetCode(EVENT_PHASE+PHASE_END)
+	e5:SetRange(LOCATION_MZONE)
+	e2:SetCountLimit(1)
+	e2:SetTarget(s.cftg)
+	e2:SetOperation(s.cfop)
+	c:RegisterEffect(e5)
 end
 s.listed_series={0x499}
 s.material_setcode=0x499
@@ -88,5 +99,18 @@ end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.NegateActivation(ev) and re:GetHandler():IsRelateToEffect(re) then
 		Duel.Destroy(eg,REASON_EFFECT)
+	end
+end
+--confirm
+function s.cftg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
+	if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_SZONE) and chkc:IsFacedown() end
+	if chk==0 then return Duel.IsExistingTarget(Card.IsFacedown,tp,0,LOCATION_SZONE,1,nil) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_FACEDOWN)
+	Duel.SelectTarget(tp,Card.IsFacedown,tp,0,LOCATION_SZONE,1,1,nil)
+end
+function s.cfop(e,tp,eg,ep,ev,re,r,rp)
+	local tc=Duel.GetFirstTarget()
+	if tc and tc:IsRelateToEffect(e) and tc:IsFacedown() then
+		Duel.ConfirmCards(tp,tc)
 	end
 end

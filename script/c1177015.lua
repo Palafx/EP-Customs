@@ -32,19 +32,21 @@ function s.initial_effect(c)
 	--look at deck
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,0))
-	e4:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
 	e4:SetCode(EVENT_PHASE+PHASE_END)
 	e4:SetRange(LOCATION_MZONE)
-	e4:SetCondition(function(_,tp) return Duel.IsTurnPlayer(tp) end)
+  e4:SetCountLimit(1)
+	e4:SetCondition(s.condition1)
 	e4:SetOperation(s.operation)
 	c:RegisterEffect(e4)
-	--look at deck
+	--look at hand
 	local e5=Effect.CreateEffect(c)
-	e5:SetDescription(aux.Stringid(id,0))
-	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
+	e5:SetDescription(aux.Stringid(id,2))
+	e5:SetCountLimit(1)
 	e5:SetCode(EVENT_PHASE+PHASE_END)
 	e5:SetRange(LOCATION_MZONE)
-	e5:SetCondition(function(_,tp) return Duel.IsTurnPlayer(1-tp) end)
+	e5:SetCondition(s.condition2)
 	e5:SetOperation(s.op)
 	c:RegisterEffect(e5)
 end
@@ -65,6 +67,9 @@ function s.ffilter2(c,fc,sumtype,tp)
 	return c:IsAttribute(ATTRIBUTE_WIND,fc,sumtype,tp) and c:IsSetCard(0x499,fc,sumtype,tp)
 end
 --top of deck
+function s.condition1(e,tp,eg,ep,ev,re,r,rp)
+	return  1-tp==Duel.GetTurnPlayer()
+end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(1-tp,1)
 	if #g==0 then return end
@@ -76,7 +81,11 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --hand
+function s.condition2(e,tp,eg,ep,ev,re,r,rp)
+	return tp==Duel.GetTurnPlayer()
+end
 function s.op(e,tp,eg,ep,ev,re,r,rp)
+  local g=Duel.GetFieldGroup(tp,0,LOCATION_HAND)
 	if #g>0 then
 		local sg=g:RandomSelect(tp,1)
 		Duel.ConfirmCards(tp,sg)
