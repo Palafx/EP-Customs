@@ -68,7 +68,7 @@ function s.ffilter2(c,fc,sumtype,tp)
 end
 --top of deck
 function s.condition1(e,tp,eg,ep,ev,re,r,rp)
-	return  1-tp==Duel.GetTurnPlayer()
+	return  tp==Duel.GetTurnPlayer()
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetDecktopGroup(1-tp,1)
@@ -82,7 +82,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 end
 --hand
 function s.condition2(e,tp,eg,ep,ev,re,r,rp)
-	return tp==Duel.GetTurnPlayer()
+	return 1-tp==Duel.GetTurnPlayer()
 end
 function s.op(e,tp,eg,ep,ev,re,r,rp)
   local g=Duel.GetFieldGroup(tp,0,LOCATION_HAND)
