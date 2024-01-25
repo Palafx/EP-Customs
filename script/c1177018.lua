@@ -39,12 +39,11 @@ end
 function s.ffilter2(c,fc,sumtype,tp)
 	return c:IsAttribute(ATTRIBUTE_DARK,fc,sumtype,tp) and c:IsSetCard(0x499,fc,sumtype,tp)
 end
-
 --cannot sp summon	
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_CARDTYPE)
-	Duel.SetTargetParam(Duel.SelectOption(tp,1056,1063,1073,1074,1057))
+	Duel.SetTargetParam(Duel.SelectOption(tp,1056,1063,1073,1076))
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
