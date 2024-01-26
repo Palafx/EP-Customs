@@ -13,14 +13,14 @@ function s.initial_effect(c)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then 
-		return Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)>0 and Duel.IsExistingMatchingCard(nil,tp,LOCATION_HAND,0,1,e:GetHandler()) 
+		return Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)>0
 	end
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.GetFieldGroup(tp,0,LOCATION_HAND)
 	if #g==0 then return end
 	local ct=Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)
-	if #g>1 then
+	if #g>0 then
 		g=g:Select(tp,1,ct,nil)
 		Duel.ConfirmCards(tp,g)
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
