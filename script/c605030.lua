@@ -23,12 +23,14 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if #g>1 then
 		g=g:Select(tp,1,ct,nil)
 		Duel.ConfirmCards(tp,g)
-		local drct=#g
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
 		local ag1=g:Select(tp,1,1,nil)
 		Duel.SendtoHand(ag1,tp,REASON_EFFECT)
-		Duel.BreakEffect()
-		Duel.Draw(1-tp,drct,REASON_EFFECT)
+		local thc=Duel.GetOperatedGroup()
+		if #thc>0 and Duel.IsPlayerCanDraw(1-tp,#g) and Duel.SelectYesNo(1-tp,aux.Stringid(id,0)) then
+			Duel.BreakEffect()
+			Duel.Draw(1-tp,#g,REASON_EFFECT)
+		end
 		Duel.ShuffleHand(1-tp)
 	end
 end
