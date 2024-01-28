@@ -1,4 +1,5 @@
---Laval 1
+--Laval Whale
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--spsummon
@@ -8,14 +9,14 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetCode(EVENT_SUMMON_SUCCESS)
 	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
-  e1:SetCountLimit(1,id)
+	e1:SetCountLimit(1,id)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
-  local e2=e1:Clone()
+	local e2=e1:Clone()
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e2)
-  --Search
+	--Search
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,0))
 	e3:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -28,6 +29,8 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 end
 s.listed_series={0x39}
+s.listed_names={74845897}
+--special summon
 function s.filter(c,e,tp)
 	return c:IsType(TYPE_TUNER) and c:IsSetCard(0x39) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP)
 end
