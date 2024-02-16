@@ -1,10 +1,10 @@
 --Aegaion the Sea Kingdom
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
---xyz summon
 	Xyz.AddProcedure(c,nil,10,3)
 	c:EnableReviveLimit()
---remove from deck
+	--remove from deck
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_REMOVE)
@@ -12,23 +12,18 @@ function s.initial_effect(c)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetRange(LOCATION_MZONE)
 	e1:SetCountLimit(1,id)
+	e1:SetHintTiming(0,TIMINGS_CHECK_MONSTER_E)
 	e1:SetCondition(s.atcon)
 	e1:SetTarget(s.rmtg1)
 	e1:SetOperation(s.rmop1)
 	c:RegisterEffect(e1)
---remove from extra
-	local e2=Effect.CreateEffect(c)
+	--remove from extra
+	local e2=e1:Clone()
 	e2:SetDescription(aux.Stringid(id,1))
-	e2:SetCategory(CATEGORY_REMOVE)
-	e2:SetType(EFFECT_TYPE_QUICK_O)
-	e2:SetCode(EVENT_FREE_CHAIN)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1,id)
-	e2:SetCondition(s.atcon)
 	e2:SetTarget(s.rmtg2)
 	e2:SetOperation(s.rmop2)
 	c:RegisterEffect(e2)
---destroy
+	--destroy
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,2))
 	e3:SetCategory(CATEGORY_TODECK+CATEGORY_DESTROY)
@@ -42,6 +37,7 @@ function s.initial_effect(c)
 	e3:SetOperation(s.desop)
 	c:RegisterEffect(e3,false,REGISTER_FLAG_DETACH_XMAT)
 end
+s.listed_names={10678778,id}
 --if has code as material
 function s.atcon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()

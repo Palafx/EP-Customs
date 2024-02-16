@@ -1,12 +1,11 @@
 --Kharvy the Deceiver
---Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	Pendulum.AddProcedure(c)
 	--Xyz Summon
 	Xyz.AddProcedure(c,nil,4,2)
 	c:EnableReviveLimit()
---Pendulum Effects
 	--Cannot target Xyz Monsters
 	local e0=Effect.CreateEffect(c)
 	e0:SetType(EFFECT_TYPE_FIELD)
@@ -27,16 +26,15 @@ function s.initial_effect(c)
 	e1:SetTarget(s.sptg1)
 	e1:SetOperation(s.spop1)
 	c:RegisterEffect(e1)
---Monster Effects
-  --Set
-  local e2=Effect.CreateEffect(c)
+	--Set
+	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e2:SetCountLimit(1,{id,1})
 	e2:SetTarget(s.settg)
-  e2:SetOperation(s.setop)
+	e2:SetOperation(s.setop)
 	c:RegisterEffect(e2)
 	--Attach
 	local e3=Effect.CreateEffect(c)
@@ -70,6 +68,8 @@ function s.initial_effect(c)
 	c:RegisterEffect(e5)
 end
 s.pendulum_level=4
+s.listed_names={67378935,84274024,id}
+s.listed_series={0x95}
 --cannot target
 function s.etarget(e,c)
 	return c:GetOverlayCount()~=0

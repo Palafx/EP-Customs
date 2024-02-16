@@ -57,13 +57,13 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetLabel()>=2 and Duel.SelectYesNo(tp,aux.Stringid(id,1)) and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil) then
 		local mg=Duel.GetMatchingGroup(s.matfilter,tp,LOCATION_MZONE,LOCATION_MZONE,nil)
 		if #mg>0 then
-			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
+			Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
 			local ovg=Duel.SelectMatchingCard(tp,s.filter,tp,LOCATION_MZONE,0,1,1,nil)
 			local tc=ovg:GetFirst()
 			if tc then
 				Duel.HintSelection(ovg)
-				Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
-				local og=mg:Select(tp,1,2,nil)
+				Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,3))
+				local og=mg:Select(tp,1,2,tc)
 				Duel.Overlay(tc,og)
 			end
 		end
