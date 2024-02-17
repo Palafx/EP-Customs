@@ -1,4 +1,5 @@
---- Kharfa the Shapeshifter
+--Kharfa the Shapeshifter
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
@@ -12,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetTarget(aux.TargetBoolFunction(Card.IsType,TYPE_PENDULUM))
 	e1:SetValue(1)
 	c:RegisterEffect(e1)
-  --Special Summon from deck
+	--Special Summon from deck
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -20,14 +21,14 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1,id)
+	e2:SetCountLimit(1,{id,3})
 	e2:SetTarget(s.sptg1)
 	e2:SetOperation(s.spop1)
 	c:RegisterEffect(e2)
-  local e3=e2:Clone()
+	local e3=e2:Clone()
 	e3:SetCode(EVENT_SUMMON_SUCCESS)
 	c:RegisterEffect(e3)
-  --Special Summon itself and change level
+	--Special Summon itself and change level
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,1))
 	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -37,8 +38,8 @@ function s.initial_effect(c)
 	e4:SetTarget(s.sptg2)
 	e4:SetOperation(s.spop2)
 	c:RegisterEffect(e4)
-  --negate
-  local e5=Effect.CreateEffect(c)
+	--negate
+	local e5=Effect.CreateEffect(c)
 	e5:SetDescription(aux.Stringid(id,0))
 	e5:SetCategory(CATEGORY_NEGATE)
 	e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DAMAGE_CAL)
@@ -73,7 +74,7 @@ function s.spop1(e,tp,eg,ep,ev,re,r,rp)
 	local g=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_DECK,0,1,1,nil,e,tp,c:GetLevel(),c:GetRace())
 	if #g>0 then
 		Duel.SpecialSummon(g,0,tp,tp,false,false,POS_FACEUP)
-    local e1=Effect.CreateEffect(c)
+		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_FIELD)
 		e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
 		e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
@@ -89,12 +90,12 @@ function s.spop1(e,tp,eg,ep,ev,re,r,rp)
 		e2:SetReset(RESET_PHASE+PHASE_END)
 		e2:SetTargetRange(1,0)
 		Duel.RegisterEffect(e2,tp)	
-    Duel.BreakEffect()
-	  local xyzg=Duel.GetMatchingGroup(s.xyzchk,tp,LOCATION_EXTRA,0,nil,sg,2,2,tp)
-	  if #xyzg>0 then
-		  Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
-		  local xyz=xyzg:Select(tp,1,1,nil):GetFirst()
-		  Duel.XyzSummon(tp,xyz,sg,sg)
+		Duel.BreakEffect()
+		local xyzg=Duel.GetMatchingGroup(s.xyzchk,tp,LOCATION_EXTRA,0,nil,sg,2,2,tp)
+		if #xyzg>0 then
+			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
+			local xyz=xyzg:Select(tp,1,1,nil):GetFirst()
+			Duel.XyzSummon(tp,xyz,sg,sg)
 	  end
   end
 end
