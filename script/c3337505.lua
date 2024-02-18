@@ -10,18 +10,19 @@ function s.initial_effect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_DESTROY)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e1:SetProperty(EFFECT_FLAG_DELAY)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e1:SetCondition(s.descon)
 	e1:SetTarget(s.destg)
 	e1:SetOperation(s.desop)
 	c:RegisterEffect(e1)
-	--decrease atk/def
+	--atkdown
 	local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_FIELD)
 	e3:SetCode(EFFECT_UPDATE_ATTACK)
 	e3:SetRange(LOCATION_MZONE)
 	e3:SetTargetRange(0,LOCATION_MZONE)
-	e3:SetValue(function(e,c) return Duel.GetMatchingGroupCount(Card.IsRace,c:GetControler(),LOCATION_GRAVE,0,nil,RACE_DINOSAUR)*100 end)
+	e3:SetValue(s.atkval)
 	c:RegisterEffect(e3)
 	local e4=e3:Clone()
 	e4:SetCode(EFFECT_UPDATE_DEFENSE)
@@ -51,9 +52,6 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --atk/def
-function s.atktg(e,c)
-	return not c:IsRace(RACE_DINOSAUR)
-end
 function s.atkval(e,c)
-	return Duel.GetMatchingGroupCount(Card.IsSetCard,0xe0,0,LOCATION_ONFIELD,LOCATION_ONFIELD,nil)*-100
+	return Duel.GetMatchingGroupCount(Card.IsRace,e:GetHandler():GetControler(),LOCATION_GRAVE,0,nil,RACE_DINOSAUR)*-100
 end

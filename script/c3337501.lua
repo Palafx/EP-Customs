@@ -1,14 +1,15 @@
---Jurrac Event
+--The Jurrac Event
 --scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
-	--special summon
+	--activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetHintTiming(0,TIMING_MAIN_END)
+	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
@@ -19,6 +20,7 @@ function s.initial_effect(c)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetHintTiming(0,TIMING_MAIN_END)
 	e2:SetRange(LOCATION_GRAVE)
+	e2:SetCountLimit(1,{id,2})
 	e2:SetCost(aux.bfgcost)
 	e2:SetTarget(s.sctg)
 	e2:SetOperation(s.scop)
@@ -30,14 +32,16 @@ function s.initial_effect(c)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e3:SetCode(EVENT_DESTROYED)
 	e3:SetProperty(EFFECT_FLAG_DELAY)
+	e3:SetCountLimit(1,{id,3})
 	e3:SetCondition(s.stcon)
 	e3:SetTarget(s.sttg)
 	e3:SetOperation(s.stop)
 	c:RegisterEffect(e3)
 end
 s.listed_series={0x22}
+--activate
 function s.filter(c,e,tp)
-	return c:IsSetCard(0x22) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP)
+	return c:IsSetCard(0x22) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP_DEFENSE)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT)
@@ -52,7 +56,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if #g<2 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local sg=g:Select(tp,3,3,nil)
-	Duel.SpecialSummon(sg,0,tp,tp,false,false,POS_FACEUP)
+	Duel.SpecialSummon(sg,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
 end
 --synchro
 function s.scfilter(c)
