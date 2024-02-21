@@ -1,4 +1,4 @@
---Super Anti Kai-ju War Machine Jaeger
+--Super War Machine Jaeger
 --Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
