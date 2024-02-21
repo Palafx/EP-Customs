@@ -62,8 +62,8 @@ function s.descost(e,tp,eg,ep,ev,re,r,rp,chk)
 		end
 	end
 	local dct=Duel.AnnounceNumber(tp,table.unpack(total_counter))//3
-	Duel.RemoveCounter(tp,1,1,0x37,dct,REASON_COST)
 	e:SetLabel(dct)
+	Duel.RemoveCounter(tp,1,1,0x37,dct*3,REASON_COST)
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(nil,tp,0,LOCATION_ONFIELD,1,nil) end
