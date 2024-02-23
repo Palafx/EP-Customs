@@ -32,7 +32,7 @@ s.listed_names={id}
 s.listed_series={0x4cf}
 --recover
 function s.cfilter(c,e)
-	return c:IsMonster() and c:IsRace(RACE_INSECT) and c:IsLocation(LOCATION_GRAVE) and c:IsAbleToRemoveAsCost() and aux.SpElimFilter(c)
+	return c:IsMonster() and c:IsRace(RACE_INSECT) and c:HasLevel() and c:IsLocation(LOCATION_GRAVE) and c:IsAbleToRemoveAsCost() and aux.SpElimFilter(c)
 end
 function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return s.cfilter(chkc,e) end
