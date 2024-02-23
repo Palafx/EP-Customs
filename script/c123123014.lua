@@ -16,6 +16,7 @@ function s.initial_effect(c)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
 end
+s.listed_names={id}
 s.listed_series={0x4cf}
 function s.spfilter(c,e,tp)
 	return c:IsFaceup() and c:IsLevelBelow(4) and c:IsSetCard(0x4cf) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)

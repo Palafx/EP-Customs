@@ -4,7 +4,7 @@ local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
 	c:EnableReviveLimit()
-Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_INSECT),2,nil,s.matcheck)
+	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_INSECT),2,nil,s.matcheck)
 	--discard deck & destroy
 	local e2=Effect.CreateEffect(c)
 	e2:SetCategory(CATEGORY_DECKDES+CATEGORY_DESTROY)
@@ -19,6 +19,7 @@ Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsRace,RACE_INSECT),2,nil,s.ma
 	c:RegisterEffect(e2)
 end
 s.listed_series={0x4cf}
+s.listed_names={id}
 --link
 function s.matcheck(g,lc,sumtype,tp)
 	return g:IsExists(Card.IsSetCard,2,nil,0x4cf,lc,sumtype,tp)
