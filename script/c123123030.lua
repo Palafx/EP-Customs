@@ -1,5 +1,5 @@
 --Seraph Call
---Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--Activate
@@ -7,23 +7,25 @@ function s.initial_effect(c)
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
-  e1:SetCountLimit(1,id)
-  e1:SetCost(s.cost)
+	e1:SetCountLimit(1,id)
+	e1:SetCost(s.cost)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
-  --sp summon
+	--sp summon
 	local e2=Effect.CreateEffect(c)
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetProperty(EFFECT_FLAG_CARD_TARGET+EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetCode(EVENT_TO_GRAVE)
-  e2:SetCountLimit(1,id)
-  e2:SetCondition(s.spcon)
+	e2:SetCountLimit(1,id)
+	e2:SetCondition(s.spcon)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
 end
+s.listed_names={id}
+s.listed_series={0x86}
 --activate
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,2,e:GetHandler()) end
@@ -43,11 +45,24 @@ function s.thcheck(sg,e,tp,mg)
 	return sg:GetClassCount(Card.GetCode)==1
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
 	local dg=Duel.GetMatchingGroup(s.filter,tp,LOCATION_DECK,0,1,nil)
 	local g=aux.SelectUnselectGroup(dg,e,tp,3,3,s.thcheck,1,tp,HINTMSG_ATOHAND)
 	if #g==3 and Duel.SendtoHand(g,nil,REASON_EFFECT)==3 then
 		Duel.ConfirmCards(1-tp,g)
 	end
+	local e1=Effect.CreateEffect(c)
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CLIENT_HINT)
+	e1:SetDescription(aux.Stringid(id,2))
+	e1:SetTargetRange(1,0)
+	e1:SetTarget(s.splimit)
+	e1:SetReset(RESET_PHASE+PHASE_END)
+	Duel.RegisterEffect(e1,tp)
+end
+function s.splimit(e,c)
+	return not c:IsRace(RACE_FAIRY)
 end
 --sp summon
 function s.spcon(e,tp,eg,ep,ev,re,r,rp)
