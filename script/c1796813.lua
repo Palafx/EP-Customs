@@ -1,33 +1,34 @@
---- Cloudian Ghust
+--Cloudian Ghust
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
---link summon
+	--link summon
 	c:EnableReviveLimit()
 	Link.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x18),1)
---battle indestructable
+	--battle indestructable
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_SINGLE)
 	e1:SetCode(EFFECT_INDESTRUCTABLE_BATTLE)
 	e1:SetValue(1)
 	c:RegisterEffect(e1)
---counter
+	--counter
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,0))
 	e3:SetCategory(CATEGORY_COUNTER)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
-  e3:SetProperty(EFFECT_FLAG_DELAY)
+	e3:SetProperty(EFFECT_FLAG_DELAY)
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e3:SetCountLimit(1,id)
-  e3:SetCondition(s.ccon)
+	e3:SetCountLimit(1,{id,1})
+	e3:SetCondition(s.ccon)
 	e3:SetOperation(s.addc)
 	c:RegisterEffect(e3)
---add
+	--add
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,1))
 	e4:SetCategory(CATEGORY_SEARCH+CATEGORY_TOHAND)
 	e4:SetType(EFFECT_TYPE_IGNITION)
 	e4:SetRange(LOCATION_MZONE)
-  e4:SetCountLimit(1,{id,2})
+	e4:SetCountLimit(1,{id,2})
 	e4:SetCost(s.thcost)
 	e4:SetTarget(s.thtg)
 	e4:SetOperation(s.thop)

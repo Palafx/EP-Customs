@@ -1,4 +1,5 @@
---- Cloudian Cirro-Q
+--Cloudian Cirro-Q
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--link summon
@@ -32,7 +33,6 @@ function s.initial_effect(c)
 	e3:SetCondition(s.ccon)
 	e3:SetOperation(s.addc)
 	c:RegisterEffect(e3)
-
 end
 s.listed_series={0x18}
 s.counter_place_list={0x1019}
@@ -54,8 +54,19 @@ function s.sfilter(c,e,tp,ct,chk_or_select)
 		and ((chk_or_select==1 and c:IsLevelBelow(ct)) or c:IsLevel(ct))
 end
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
+	local maxlevel=Duel.GetCounter(tp,1,1,0x1019)
 	if chk==0 then return Duel.GetCustomActivityCount(id,tp,ACTIVITY_SPSUMMON)==0 end
-	 local e1=Effect.CreateEffect(e:GetHandler())
+	local g=Duel.GetMatchingGroup(s.sfilter,tp,LOCATION_GRAVE,0,nil,e,tp,maxlevel,1)
+	local lvtable={}
+	for tc in g:Iter() do
+		local level=tc:GetLevel()
+		table.insert(lvtable,level)
+	end
+	Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,1))
+	local lv=Duel.AnnounceNumber(tp,table.unpack(lvtable))
+	Duel.RemoveCounter(tp,1,1,0x1019,lv,REASON_COST)
+	e:SetLabel(lv)
+	local e1=Effect.CreateEffect(e:GetHandler())
 	e1:SetType(EFFECT_TYPE_FIELD)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CLIENT_HINT)
@@ -70,18 +81,8 @@ function s.splimit(e,c)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local maxlevel=Duel.GetCounter(tp,1,1,0x1019)
-	if chk==0 then Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and Duel.IsExistingMatchingCard(s.sfilter,tp,LOCATION_GRAVE,0,1,nil,e,tp,maxlevel,1) end
-	local g=Duel.GetMatchingGroup(s.sfilter,tp,LOCATION_GRAVE,0,nil,e,tp,maxlevel,1)
-	local lvtable={}
-	for tc in g:Iter() do
-		local level=tc:GetLevel()
-		table.insert(lvtable,level)
-	end
-	Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,1))
-	local lv=Duel.AnnounceNumber(tp,table.unpack(lvtable))
-	Duel.RemoveCounter(tp,1,1,0x1019,lv,REASON_COST)
-	e:SetLabel(lv)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_GRAVE)
 end
 
