@@ -5,7 +5,7 @@ function s.initial_effect(c)
 	--Synchro summon
 	Synchro.AddProcedure(c,aux.FilterBoolFunctionEx(Card.IsSetCard,0x4cf),1,1,Synchro.NonTuner(nil),1,99)
 	c:EnableReviveLimit()
-	--spsummon
+	--Gain LP
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_RECOVER+CATEGORY_DRAW)
@@ -36,7 +36,7 @@ function s.cfilter(c,e)
 end
 function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return s.cfilter(chkc,e) end
-	if chk==0 then return true end
+	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_GRAVE,0,1,nil,e,tp) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TARGET)
 	local g=Duel.SelectTarget(tp,s.cfilter,tp,LOCATION_GRAVE,0,1,1,nil,e,tp)
 end

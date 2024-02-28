@@ -46,7 +46,7 @@ function s.desfilter(c,tp)
 	return c:IsFaceup() and c:GetAttack() and Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_DECK,0,1,c,c)
 end
 function s.tgfilter(c,rc)
-	return c:GetAttack()>=rc:GetAttack() and c:IsRace(RACE_INSECT) and c:IsAbleToGrave()
+	return c:GetAttack()<=rc:GetAttack() and c:IsRace(RACE_INSECT) and c:IsAbleToGrave()
 end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	if chkc then return chkc:IsLocation(LOCATION_MZONE) and chkc:IsControler(1-tp) and s.desfilter(chkc,tp) end
