@@ -1,13 +1,13 @@
---- Parasitic Hyper Incubation
---- Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Parasitic Hyper Incubation
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--Activate
 	local e1=Effect.CreateEffect(c)
-  e1:SetType(EFFECT_TYPE_ACTIVATE)
-  e1:SetCode(EVENT_FREE_CHAIN)
-  c:RegisterEffect(e1)
-  --Special Summon Token
+	e1:SetType(EFFECT_TYPE_ACTIVATE)
+	e1:SetCode(EVENT_FREE_CHAIN)
+	c:RegisterEffect(e1)
+	--Special Summon Token
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(aux.Stringid(id,1))
 	e3:SetCategory(CATEGORY_TOKEN)
@@ -21,15 +21,15 @@ function s.initial_effect(c)
 	c:RegisterEffect(e3)
 	--Reveal Parasites in Hand
 	local e2=Effect.CreateEffect(c)
-  e2:SetType(EFFECT_TYPE_FIELD)
-  e2:SetCode(EFFECT_PUBLIC)
-  e2:SetRange(LOCATION_FZONE)
-  e2:SetValue(1)
-  e2:SetTarget(s.filter)
-  e2:SetTargetRange(0,LOCATION_HAND)
-  c:RegisterEffect(e2)
-  --Draw to Special Summon
-  local e4=Effect.CreateEffect(c)
+	e2:SetType(EFFECT_TYPE_FIELD)
+	e2:SetCode(EFFECT_PUBLIC)
+	e2:SetRange(LOCATION_FZONE)
+	e2:SetValue(1)
+	e2:SetTarget(s.filter)
+	e2:SetTargetRange(0,LOCATION_HAND)
+	c:RegisterEffect(e2)
+	--Draw to Special Summon
+	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(aux.Stringid(id,0))
 	e4:SetCategory(CATEGORY_DRAW+CATEGORY_SPECIAL_SUMMON)
 	e4:SetType(EFFECT_TYPE_IGNITION)
@@ -54,7 +54,7 @@ end
 s.listed_series={0x53d}
 --reveal
 function s.filter(e,c)
-  return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x53d)
+	return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x53d)
 end
 --summon token
 function s.damcon(e,tp,eg,ep,ev,re,r,rp)
@@ -63,19 +63,18 @@ function s.damcon(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.damtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return e:GetHandler():IsRelateToEffect(e) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsPlayerCanSpecialSummonMonster(tp,982198099,0,TYPES_TOKEN,0,0,1,RACE_INSECT,ATTRIBUTE_EARTH)
-	end
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,982198099,0,TYPES_TOKEN,0,0,1,RACE_INSECT,ATTRIBUTE_EARTH) end
 	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,1,0,0)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0)
 end
 function s.damop(e,tp,eg,ep,ev,re,r,rp)
-  local c=e:GetHandler()
-  if c:IsRelateToEffect(e) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-    and Duel.IsPlayerCanSpecialSummonMonster(tp,982198099,0,TYPES_TOKEN,0,0,1,RACE_INSECT,ATTRIBUTE_EARTH) then
-    Duel.BreakEffect()
-    local token=Duel.CreateToken(tp,982198099)
-    Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
-  end
+	local c=e:GetHandler()
+	if c:IsRelateToEffect(e) and Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,982198099,0,TYPES_TOKEN,0,0,1,RACE_INSECT,ATTRIBUTE_EARTH) then
+		Duel.BreakEffect()
+		local token=Duel.CreateToken(tp,982198099)
+		Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
+	end
 end
 --draw
 function s.cfilter(c)

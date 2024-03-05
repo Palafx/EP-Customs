@@ -59,20 +59,24 @@ end
 function s.descon(e)
 	return e:GetHandler():GetOverlayGroup():IsExists(Card.IsCode,1,nil,23649496)
 end
-function s.desfilter(c,e)
-	return c:IsFaceup() and c:IsCanBeEffectTarget(e)
-end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
-	if chkc then return chkc:IsOnField() and chkc:IsControler(1-tp) and chkc:IsFaceup() end
+	if chkc then return chkc:IsControler(1-tp) and chkc:IsLocation(LOCATION_ONFIELD) and chkc:IsFaceup() and chkc:IsAbleToRemove() end
 	if chk==0 then return Duel.IsExistingTarget(Card.IsFaceup,tp,0,LOCATION_ONFIELD,1,nil) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
 	local g=Duel.SelectTarget(tp,Card.IsFaceup,tp,0,LOCATION_ONFIELD,1,1,nil)
-	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,1,0,0)
+	Duel.SetOperationInfo(0,CATEGORY_REMOVE,g,1,0,0)
+	Duel.SetPossibleOperationInfo(0,CATEGORY_REMOVE,nil,1,1-tp,LOCATION_ONFIELD)
+end
+function s.rfilter(c,code)
+	return c:IsCode(code) and c:IsAbleToRemove() and aux.SpElimFilter(c,true)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=Duel.GetFirstTarget()
-	local tpe=tc:GetType()
-	if (tpe&TYPE_TOKEN)~=0 then return end
-	local dg=Duel.GetMatchingGroup(Card.IsCode,tc:GetControler(),LOCATION_ONFIELD+LOCATION_HAND,0,nil,tc:GetCode())
-	Duel.Destroy(dg,REASON_EFFECT)
+	if tc and tc:IsFaceup() and tc:IsRelateToEffect(e) and Duel.Remove(tc,POS_FACEUP,REASON_EFFECT)>0 then
+		local rg=Duel.GetMatchingGroup(s.rfilter,tp,0,LOCATION_ONFIELD,tc,tc:GetCode())
+		if Duel.GetOperatedGroup():GetFirst():IsLocation(LOCATION_REMOVED) and #rg>0 then
+			Duel.BreakEffect()
+			Duel.Remove(rg,POS_FACEUP,REASON_EFFECT)
+		end
+	end
 end

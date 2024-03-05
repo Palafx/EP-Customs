@@ -21,9 +21,10 @@ function s.initial_effect(c)
 	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1,{id,3})
-	e2:SetTarget(s.sptg1)
-	e2:SetOperation(s.spop1)
+	e2:SetCountLimit(1,{id,1})
+	e2:SetTarget(s.sptg)
+	e2:SetCost(s.spcost)
+	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
 	local e3=e2:Clone()
 	e3:SetCode(EVENT_SUMMON_SUCCESS)
@@ -34,9 +35,9 @@ function s.initial_effect(c)
 	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e4:SetType(EFFECT_TYPE_IGNITION)
 	e4:SetRange(LOCATION_PZONE)
-	e4:SetCountLimit(1,{id,1})
-	e4:SetTarget(s.sptg2)
-	e4:SetOperation(s.spop2)
+	e4:SetCountLimit(1,{id,2})
+	e4:SetTarget(s.pendtg)
+	e4:SetOperation(s.pendop)
 	c:RegisterEffect(e4)
 	--negate
 	local e5=Effect.CreateEffect(c)
@@ -46,7 +47,7 @@ function s.initial_effect(c)
 	e5:SetType(EFFECT_TYPE_QUICK_O)
 	e5:SetCode(EVENT_CHAINING)
 	e5:SetRange(LOCATION_HAND)
-	e5:SetCountLimit(1,{id,2})
+	e5:SetCountLimit(1,{id,3})
 	e5:SetCondition(s.condition)
 	e5:SetCost(s.cost)
 	e5:SetTarget(s.target)
@@ -60,12 +61,16 @@ end
 function s.xyzchk(c,sg,minc,maxc,tp)
 	return c:IsXyzSummonable(nil,sg,minc,maxc) and Duel.GetLocationCountFromEx(tp,tp,sg,c)>0
 end
-function s.sptg1(e,tp,eg,ep,ev,re,r,rp,chk)
+function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsDiscardable,tp,LOCATION_HAND,0,1,nil) end
+	Duel.DiscardHand(tp,Card.IsDiscardable,1,1,REASON_COST+REASON_DISCARD,nil)
+end
+function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
 		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,1,nil,e,tp,e:GetHandler():GetLevel(),e:GetHandler():GetRace()) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,0,LOCATION_DECK)
 end
-function s.spop1(e,tp,eg,ep,ev,re,r,rp)
+function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local g=Duel.GetFirstTarget()
 	if not (c:IsRelateToEffect(e) and c:IsFaceup()) then return end
@@ -96,43 +101,42 @@ function s.spop1(e,tp,eg,ep,ev,re,r,rp)
 			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 			local xyz=xyzg:Select(tp,1,1,nil):GetFirst()
 			Duel.XyzSummon(tp,xyz,sg,sg)
-	  end
-  end
+		end
+	end
 end
 function s.splimit(e,c)
-  return not c:IsType(TYPE_XYZ) and c:IsLocation(LOCATION_EXTRA)
+	return not c:IsType(TYPE_XYZ) and c:IsLocation(LOCATION_EXTRA)
 end
 function s.lizfilter(e,c)
-  return not c:IsOriginalType(TYPE_XYZ)
+	return not c:IsOriginalType(TYPE_XYZ)
 end
 --sp summon self
-function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+function s.pendtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LVRANK)
 	local lv=Duel.AnnounceLevel(tp,1,12)
 	Duel.SetTargetParam(lv)
-  Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RACE)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RACE)
 	local rc=Duel.AnnounceRace(tp,1,RACE_ALL)
 	e:SetLabel(rc)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
 end
-function s.spop2(e,tp,eg,ep,ev,re,r,rp)
+function s.pendop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local lv=Duel.GetChainInfo(0,CHAININFO_TARGET_PARAM)
-  local rc=(e:GetLabel())
+	local rc=(e:GetLabel())
 	if c:IsRelateToEffect(e) and Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)~=0 then
 		local e1=Effect.CreateEffect(c)
 		e1:SetType(EFFECT_TYPE_SINGLE)
 		e1:SetCode(EFFECT_CHANGE_LEVEL)
 		e1:SetValue(lv)
-		e1:SetReset(RESET_EVENT+RESETS_STANDARD)
+		e1:SetReset(RESETS_STANDARD_PHASE_END)
 		c:RegisterEffect(e1)
-    local e2=Effect.CreateEffect(c)
-    e2:SetType(EFFECT_TYPE_SINGLE)
+		local e2=Effect.CreateEffect(c)
+		e2:SetType(EFFECT_TYPE_SINGLE)
 		e2:SetCode(EFFECT_CHANGE_RACE)
 		e2:SetValue(rc)
-		e2:SetReset(RESET_EVENT+RESETS_STANDARD)
+		e2:SetReset(RESETS_STANDARD_PHASE_END)
 		c:RegisterEffect(e2)
 	end
 end
