@@ -2,6 +2,7 @@
 --Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
+	----Pendulum Effects
 	--pendulum summon
 	Pendulum.AddProcedure(c)
 	--Cannot destroy
@@ -13,31 +14,33 @@ function s.initial_effect(c)
 	e1:SetTarget(aux.TargetBoolFunction(Card.IsType,TYPE_PENDULUM))
 	e1:SetValue(1)
 	c:RegisterEffect(e1)
-	--Special Summon from deck
+	--Special Summon itself and change level
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
-	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e2:SetRange(LOCATION_MZONE)
-	e2:SetCountLimit(1,{id,1})
-	e2:SetTarget(s.sptg)
-	e2:SetCost(s.spcost)
-	e2:SetOperation(s.spop)
+	e2:SetType(EFFECT_TYPE_IGNITION)
+	e2:SetRange(LOCATION_PZONE)
+	e2:SetCountLimit(1,{id,2})
+	e2:SetTarget(s.pendtg)
+	e2:SetOperation(s.pendop)
 	c:RegisterEffect(e2)
-	local e3=e2:Clone()
-	e3:SetCode(EVENT_SUMMON_SUCCESS)
+	
+	----Monster Effects
+	--Special Summon from deck
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetCountLimit(1,{id,1})
+	e3:SetTarget(s.sptg)
+	e3:SetCost(s.spcost)
+	e3:SetOperation(s.spop)
 	c:RegisterEffect(e3)
-	--Special Summon itself and change level
-	local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(id,1))
-	e4:SetCategory(CATEGORY_SPECIAL_SUMMON)
-	e4:SetType(EFFECT_TYPE_IGNITION)
-	e4:SetRange(LOCATION_PZONE)
-	e4:SetCountLimit(1,{id,2})
-	e4:SetTarget(s.pendtg)
-	e4:SetOperation(s.pendop)
+	local e4=e3:Clone()
+	e4:SetCode(EVENT_SUMMON_SUCCESS)
 	c:RegisterEffect(e4)
 	--negate
 	local e5=Effect.CreateEffect(c)
@@ -54,6 +57,40 @@ function s.initial_effect(c)
 	e5:SetOperation(s.operation)
 	c:RegisterEffect(e5)
 end
+s.listed_names={id}
+----Pendulum Effects
+--sp summon self
+function s.pendtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LVRANK)
+	local lv=Duel.AnnounceLevel(tp,1,12)
+	Duel.SetTargetParam(lv)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RACE)
+	local rc=Duel.AnnounceRace(tp,1,RACE_ALL)
+	e:SetLabel(rc)
+	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
+end
+function s.pendop(e,tp,eg,ep,ev,re,r,rp)
+	local c=e:GetHandler()
+	local lv=Duel.GetChainInfo(0,CHAININFO_TARGET_PARAM)
+	local rc=(e:GetLabel())
+	if c:IsRelateToEffect(e) and Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)~=0 then
+		local e1=Effect.CreateEffect(c)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_CHANGE_LEVEL)
+		e1:SetValue(lv)
+		e1:SetReset(RESETS_STANDARD_PHASE_END)
+		c:RegisterEffect(e1)
+		local e2=Effect.CreateEffect(c)
+		e2:SetType(EFFECT_TYPE_SINGLE)
+		e2:SetCode(EFFECT_CHANGE_RACE)
+		e2:SetValue(rc)
+		e2:SetReset(RESETS_STANDARD_PHASE_END)
+		c:RegisterEffect(e2)
+	end
+end
+
+----Monster Effects
 --sp summon from deck
 function s.spfilter(c,e,tp,lvl,rc)
 	return c:IsLevel(lvl) and c:IsRace(rc) and c:IsCanBeSpecialSummoned(e,0,tp,false,false) and not c:IsCode(id)
@@ -110,36 +147,7 @@ end
 function s.lizfilter(e,c)
 	return not c:IsOriginalType(TYPE_XYZ)
 end
---sp summon self
-function s.pendtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0 and e:GetHandler():IsCanBeSpecialSummoned(e,0,tp,false,false) end
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_LVRANK)
-	local lv=Duel.AnnounceLevel(tp,1,12)
-	Duel.SetTargetParam(lv)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_RACE)
-	local rc=Duel.AnnounceRace(tp,1,RACE_ALL)
-	e:SetLabel(rc)
-	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,e:GetHandler(),1,0,0)
-end
-function s.pendop(e,tp,eg,ep,ev,re,r,rp)
-	local c=e:GetHandler()
-	local lv=Duel.GetChainInfo(0,CHAININFO_TARGET_PARAM)
-	local rc=(e:GetLabel())
-	if c:IsRelateToEffect(e) and Duel.SpecialSummon(c,0,tp,tp,false,false,POS_FACEUP)~=0 then
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_SINGLE)
-		e1:SetCode(EFFECT_CHANGE_LEVEL)
-		e1:SetValue(lv)
-		e1:SetReset(RESETS_STANDARD_PHASE_END)
-		c:RegisterEffect(e1)
-		local e2=Effect.CreateEffect(c)
-		e2:SetType(EFFECT_TYPE_SINGLE)
-		e2:SetCode(EFFECT_CHANGE_RACE)
-		e2:SetValue(rc)
-		e2:SetReset(RESETS_STANDARD_PHASE_END)
-		c:RegisterEffect(e2)
-	end
-end
+
 --negate
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return ep~=tp and Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsType,TYPE_XYZ),tp,LOCATION_MZONE,0,1,nil)

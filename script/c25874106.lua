@@ -13,8 +13,9 @@ function s.initial_effect(c)
 	e1:SetCategory(CATEGORY_RECOVER)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetHintTiming(TIMING_END_PHASE)
-	e1:SetCountLimit(1,id)
+	e1:SetHintTiming(0,TIMING_MAIN_END)
+	e1:SetCountLimit(1,{id,1})
+	e1:SetCondition(s.recon)
 	e1:SetTarget(s.rectg)
 	e1:SetOperation(s.recop)
 	c:RegisterEffect(e1)
@@ -36,7 +37,7 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_DAMAGE_STEP)
 	e2:SetCode(EVENT_LEAVE_FIELD)
-	e2:SetCountLimit(1,{id,1})
+	e2:SetCountLimit(1,{id,2})
 	e2:SetCondition(s.spcon)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
@@ -45,9 +46,6 @@ end
 s.listed_names={2665273,25874104}
 s.listed_series={SET_GENERAIDER}
 --fusion
-function s.ffilter(c,fc,sumtype,tp)
-	return c:IsSetCard(SET_VAYLANTZ,fc,sumtype,tp) and c:IsLevelAbove(5)
-end
 function s.contactfil(tp)
 	return Duel.GetReleaseGroup(tp)
 end
@@ -58,9 +56,12 @@ function s.splimit(e,se,sp,st)
 	local c=e:GetHandler()
 	return not (c:IsLocation(LOCATION_EXTRA) and c:IsFacedown())
 end
---rec
+--recover
 function s.checkop(e,tp,eg,ep,ev,re,r,rp)
 	s[0]=s[0]+eg:FilterCount(Card.IsType,nil,TYPE_MONSTER)
+end
+function s.recon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.GetCurrentPhase()==PHASE_MAIN1 or Duel.GetCurrentPhase()==PHASE_MAIN2
 end
 function s.rectg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return s[0]~=0 end
@@ -84,8 +85,12 @@ function s.spcon(e,tp,eg,ep,ev,re,r,rp)
 	return c:IsPreviousPosition(POS_FACEUP) and c:IsPreviousControler(tp) and c:GetLocation()~=LOCATION_DECK
 		and c:IsReason(REASON_EFFECT) and c:GetReasonPlayer()==1-tp and c:IsPreviousControler(tp)
 end
-function s.filter1(c,e,tp)
-	return c:IsType(TYPE_XYZ) and c:IsSetCard(SET_GENERAIDER) and Duel.GetLocationCountFromEx(tp,tp,ec,c)>0 and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+function s.spfilter(c,e,tp)
+	return c:IsType(TYPE_XYZ) and c:IsSetCard(SET_GENERAIDER) and Duel.GetLocationCountFromEx(tp,tp,ec,c)>0 
+		and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
+end
+function s.ovfilter(c,e,tp)
+	return c:IsSetCard(SET_GENERAIDER) and c:IsMonster()
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then
@@ -98,9 +103,14 @@ function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)<1 then return end
-	local g=Duel.GetMatchingGroup(s.filter1,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,nil,e,tp)
-	local sg=aux.SelectUnselectGroup(g,e,tp,1,1,aux.dncheck,1,tp,HINTMSG_SPSUMMON)
-	if sg then
-		Duel.SpecialSummon(sg,0,tp,tp,false,false,POS_FACEUP)
+	--local g=Duel.GetMatchingGroup(s.filter1,tp,LOCATION_EXTRA+LOCATION_GRAVE,0,nil,e,tp)
+	
+	local tc=Duel.SelectMatchingCard(tp,s.spfilter,tp,LOCATION_EXTRA|LOCATION_GRAVE,0,1,1,nil,e,tp):GetFirst()
+	if tc and Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)>0 then
+		Duel.BreakEffect()
+		local mg=Duel.GetMatchingGroup(s.ovfilter,tp,LOCATION_DECK|LOCATION_GRAVE,0,nil)
+		Duel.Hint(HINT_SELECTMSG,tp,aux.Stringid(id,0))
+		local og=mg:Select(tp,1,1,tc)
+		Duel.Overlay(tc,og)
 	end
 end
