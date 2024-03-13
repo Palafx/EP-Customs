@@ -72,12 +72,10 @@ function s.sptg2(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_DECK)
 end
 function s.spop2(e,tp,eg,ep,ev,re,r,rp)
-
 	local g1=Duel.GetLocationCount(tp,LOCATION_MZONE)
 	local g2=Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil)
 	local opt=0
-	if g1>0 and g2 then
-		opt=Duel.SelectOption(tp,aux.Stringid(id,0),aux.Stringid(id,1))+1
+	if g1>0 and g2 then opt=Duel.SelectOption(tp,aux.Stringid(id,0),aux.Stringid(id,1))+1
 	elseif g1>0 then opt=1
 	elseif g2 then opt=2
 	end

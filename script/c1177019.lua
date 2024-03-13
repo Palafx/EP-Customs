@@ -31,6 +31,7 @@ function s.initial_effect(c)
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e3)
 end
+s.listed_names={id}
 s.listed_series={0x499}
 s.material_setcode=0x499
 --unique
@@ -50,18 +51,21 @@ function s.filter(c,e,tp)
   return c:IsSummonPlayer(1-tp) and c:IsRelateToEffect(e) and c:IsAbleToDeck()
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
-  local g=eg:Filter(s.filter,nil,e,tp)
-  if #g>0 then
-    --announce coin and return
-    if Duel.TossCoin(tp,1)==COIN_HEADS then
-    	Duel.SendtoDeck(g,nil,0,REASON_EFFECT)
+	local g=eg:Filter(s.filter,nil,e,tp)
+	local tc=g:GetFirst()
+	if #g>0 then
+		--announce coin and return
+		if Duel.TossCoin(tp,1)==COIN_HEADS then
+			Duel.SendtoDeck(g,nil,0,REASON_EFFECT)
 		else
 			--Cannot attack
 			local e1=Effect.CreateEffect(e:GetHandler())
+			e1:SetDescription(3206)
+			e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_CLIENT_HINT)
 			e1:SetType(EFFECT_TYPE_SINGLE)
 			e1:SetCode(EFFECT_CANNOT_ATTACK)
 			e1:SetReset(RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END)
-			g:RegisterEffect(e1)
+			tc:RegisterEffect(e1)
 		end
 	end
 end

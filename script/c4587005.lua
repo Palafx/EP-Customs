@@ -9,14 +9,14 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
-  --Special Summon from Deck
+	--Special Summon from Deck
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_IGNITION)
 	e2:SetRange(LOCATION_FZONE)
-	e2:SetCountLimit(1,id)
-  e2:SetCost(s.spcost)
+	e2:SetCountLimit(1,{id,1})
+	e2:SetCost(s.spcost)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
@@ -26,15 +26,17 @@ function s.initial_effect(c)
 	e3:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
 	e3:SetType(EFFECT_TYPE_IGNITION)
 	e3:SetRange(LOCATION_FZONE)
-	e3:SetCountLimit(1,id)
+	e3:SetCountLimit(1,{id,1})
 	e3:SetCost(s.tkcost)
 	e3:SetTarget(s.tktg)
 	e3:SetOperation(s.tkop)
 	c:RegisterEffect(e3)
 end
+s.listed_names={TOKEN_MECHA_PHANTOM_BEAST,id}
+s.listed_series={SET_MECHA_PHANTOM_BEAST}
 --add
 function s.filter(c)
-	return c:IsMonster() and c:IsSetCard(0x101b) and c:IsAbleToHand()
+	return c:IsMonster() and c:IsSetCard(SET_MECHA_PHANTOM_BEAST) and c:IsAbleToHand()
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end
@@ -50,9 +52,8 @@ end
 function s.rfilter(c,e,tp,ft)
 	local rac=c:GetRace()
   local attr=c:GetAttribute()
-	return c:IsType(TYPE_TOKEN) and c:IsReleasable()
-		and (ft>0 or (c:IsControler(tp) and c:GetSequence()<5)) and (c:IsControler(tp) or c:IsFaceup())
-		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,1,nil,e,tp,rac,attr)
+	return c:IsType(TYPE_TOKEN) and c:IsReleasable() and (ft>0 or (c:IsControler(tp) and c:GetSequence()<5)) 
+		and (c:IsControler(tp) or c:IsFaceup()) and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK,0,1,nil,e,tp,rac,attr)
 end
 function s.spfilter(c,e,tp,rac,attr)
 	return c:GetRace()==rac and c:GetAttribute()==attr and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
@@ -93,7 +94,7 @@ function s.tktg(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.tkop(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0 
-		and Duel.IsPlayerCanSpecialSummonMonster(tp,TOKEN_MECHA_PHANTOM_BEAST,0x101b,TYPES_TOKEN,0,0,3,RACE_MACHINE,ATTRIBUTE_WIND) then
+		and Duel.IsPlayerCanSpecialSummonMonster(tp,TOKEN_MECHA_PHANTOM_BEAST,SET_MECHA_PHANTOM_BEAST,TYPES_TOKEN,0,0,3,RACE_MACHINE,ATTRIBUTE_WIND) then
 		local token=Duel.CreateToken(tp,TOKEN_MECHA_PHANTOM_BEAST_TETHERWOLF)
 		Duel.SpecialSummon(token,0,tp,tp,false,false,POS_FACEUP)
 	end
