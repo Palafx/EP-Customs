@@ -19,6 +19,7 @@ function s.initial_effect(c)
 	e2:SetCode(EVENT_CHAINING)
 	e2:SetRange(LOCATION_MZONE)
 	e2:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+	e2:SetTarget(s.milltg)
 	e2:SetOperation(s.regop)
 	c:RegisterEffect(e2)
 	local e3=Effect.CreateEffect(c)
@@ -52,6 +53,10 @@ function s.ffilter2(c,fc,sumtype,tp)
 	return c:IsAttribute(ATTRIBUTE_WIND,fc,sumtype,tp) and c:IsSetCard(0x499,fc,sumtype,tp)
 end
 --mill
+function s.milltg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsPlayerCanDiscardDeck(tp,3) end
+	Duel.SetOperationInfo(0,CATEGORY_DECKDES,nil,0,tp,3)
+end
 function s.regop(e,tp,eg,ep,ev,re,r,rp)
 	e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD-RESET_TURN_SET+RESET_CHAIN,0,1)
 end

@@ -35,18 +35,19 @@ function s.initial_effect(c)
 	e4:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
 	e4:SetCode(EVENT_PHASE+PHASE_END)
 	e4:SetRange(LOCATION_MZONE)
-  e4:SetCountLimit(1)
+	e4:SetCountLimit(1)
 	e4:SetCondition(s.condition1)
 	e4:SetOperation(s.operation)
 	c:RegisterEffect(e4)
 	--look at hand
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_F)
-	e5:SetDescription(aux.Stringid(id,2))
+	e5:SetDescription(aux.Stringid(id,1))
 	e5:SetCountLimit(1)
 	e5:SetCode(EVENT_PHASE+PHASE_END)
 	e5:SetRange(LOCATION_MZONE)
 	e5:SetCondition(s.condition2)
+	e5:SetTarget(s.handtg)
 	e5:SetOperation(s.op)
 	c:RegisterEffect(e5)
 end
@@ -75,7 +76,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	if #g==0 then return end
 	Duel.ConfirmCards(tp,g)
 	local tc=g:GetFirst()
-	local opt=Duel.SelectOption(tp,aux.Stringid(id,1),aux.Stringid(id,2))
+	local opt=Duel.SelectOption(tp,aux.Stringid(id,2),aux.Stringid(id,3))
 	if opt==1 then
 		Duel.MoveSequence(tc,opt)
 	end
@@ -83,6 +84,9 @@ end
 --hand
 function s.condition2(e,tp,eg,ep,ev,re,r,rp)
 	return 1-tp==Duel.GetTurnPlayer()
+end
+function s.handtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)>0 end
 end
 function s.op(e,tp,eg,ep,ev,re,r,rp)
   local g=Duel.GetFieldGroup(tp,0,LOCATION_HAND)

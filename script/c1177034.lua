@@ -58,20 +58,9 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.ConfirmCards(1-tp,rg)
 	local tg=rg:RandomSelect(1-tp,1)
 	local tc=tg:GetFirst()
-	if tc and tc:IsCanBeSpecialSummoned(e,0,tp,false,false) then
-		Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)
-		tc:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD+RESET_PHASE+PHASE_END,0,1,fid)
-		local e1=Effect.CreateEffect(c)
-		e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
-		e1:SetCode(EVENT_PHASE+PHASE_END)
-		e1:SetProperty(EFFECT_FLAG_IGNORE_IMMUNE)
-		e1:SetCountLimit(1)
-		e1:SetLabel(fid)
-		e1:SetLabelObject(tc)
-		e1:SetCondition(s.descon)
-		e1:SetOperation(s.desop)
-		e1:SetReset(RESET_PHASE+PHASE_END)
-		Duel.RegisterEffect(e1,tp)
+	if tc and tc:IsCanBeSpecialSummoned(e,0,tp,false,false) and Duel.SpecialSummon(tc,0,tp,tp,false,false,POS_FACEUP)>0 then
+		--Destroy it during the End Phase
+		aux.DelayedOperation(tc,PHASE_END,id,e,tp,function(dg) Duel.Destroy(dg,REASON_EFFECT) end,nil,0,nil,aux.Stringid(id,3))
 	end
 end 
 function s.descon(e,tp,eg,ep,ev,re,r,rp)

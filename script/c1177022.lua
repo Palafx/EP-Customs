@@ -8,6 +8,7 @@ function s.initial_effect(c)
 	e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE+EFFECT_FLAG_UNCOPYABLE)
 	e1:SetCode(EFFECT_SPSUMMON_CONDITION)
 	c:RegisterEffect(e1)
+	--Special Summon procedure
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_SPSUMMON_PROC)
@@ -17,14 +18,24 @@ function s.initial_effect(c)
 	e2:SetTarget(s.sptg)
 	e2:SetOperation(s.spop)
 	c:RegisterEffect(e2)
-	--Gain ATK
+	--equip
 	local e3=Effect.CreateEffect(c)
-	e3:SetDescription(aux.Stringid(id,0))
-	e3:SetCategory(CATEGORY_ATKCHANGE)
-	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetCategory(CATEGORY_EQUIP)
+	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
+	e3:SetProperty(EFFECT_FLAG_DAMAGE_STEP)
 	e3:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e3:SetOperation(s.op)
+	e3:SetTarget(s.eqtg)
+	e3:SetOperation(s.eqop)
 	c:RegisterEffect(e3)
+	--atkup
+	local e4=Effect.CreateEffect(c)
+	e4:SetType(EFFECT_TYPE_SINGLE)
+	e4:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e4:SetCode(EFFECT_UPDATE_ATTACK)
+	e4:SetRange(LOCATION_MZONE)
+	e4:SetValue(function(e,c) return c:GetEquipCount()*1600 end)
+	c:RegisterEffect(e4)
 	--Cannot be material
 	local e5=Effect.CreateEffect(c)
 	e5:SetType(EFFECT_TYPE_SINGLE)
@@ -44,21 +55,24 @@ end
 s.listed_names={id}
 s.listed_series={0x499}
 --special summon
-function s.spfilter(c,tp)
-	return c:IsRace(RACE_DRAGON) and c:IsSetCard(0x499) and c:IsAbleToRemoveAsCost() and (Duel.GetLocationCount(tp,LOCATION_MZONE)>0 or (c:IsLocation(LOCATION_MZONE) and c:GetSequence()<5))
+function s.spfilter(c)
+	return c:IsMonster() and c:IsSetCard(0x499) and (c:IsFaceup() or not c:IsOnField()) and c:IsAbleToRemoveAsCost() 
+		and aux.SpElimFilter(c,true,true) and not c:IsAttribute(ATTRIBUTE_DIVINE)
+end
+function s.rescon(sg,e,tp)
+    return aux.ChkfMMZ(1)(sg,e,tp,nil)
+        and (sg:GetBitwiseOr(Card.GetAttribute) & (0xf|ATTRIBUTE_DARK)) == (0xf|ATTRIBUTE_DARK)
 end
 function s.spcon(e,c)
 	if c==nil then return true end
-	local tp=e:GetHandlerPlayer()
-	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_MZONE+LOCATION_GRAVE,0,nil,tp)
-	local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
-	return ft>-1 and #rg>0 and aux.SelectUnselectGroup(rg,e,tp,3,3,nil,0)
+	local tp=c:GetControler()
+	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_MZONE+LOCATION_GRAVE,0,nil)
+	return Duel.GetLocationCount(tp,LOCATION_MZONE)>-6 and #rg>5
+		and aux.SelectUnselectGroup(rg,e,tp,6,6,s.rescon,0)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
-	local c=e:GetHandler()
-	local g=nil
-	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_MZONE+LOCATION_GRAVE,0,nil,tp)
-	local g=aux.SelectUnselectGroup(rg,e,tp,3,3,nil,1,tp,HINTMSG_REMOVE,nil,nil,true)
+	local rg=Duel.GetMatchingGroup(s.spfilter,tp,LOCATION_MZONE+LOCATION_GRAVE,0,nil)
+	local g=aux.SelectUnselectGroup(rg,e,tp,6,6,s.rescon,1,tp,HINTMSG_REMOVE,nil,nil,true)
 	if #g>0 then
 		g:KeepAlive()
 		e:SetLabelObject(g)
@@ -68,32 +82,35 @@ function s.sptg(e,tp,eg,ep,ev,re,r,rp,c)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 	local g=e:GetLabelObject()
-  if not g then return end
-  local tc=g:GetFirst()
-  local atk=0
-  for tc in aux.Next(g) do
-    local catk=tc:GetBaseAttack()
-    if catk<0 then catk=0 end
-    atk=atk+catk
-  end
-  e:GetHandler():RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD,0,1,atk)
-  Duel.Remove(g,POS_FACEUP,REASON_COST)
-  g:DeleteGroup()
+	if not g then return end
+	Duel.Remove(g,POS_FACEUP,REASON_COST)
+	g:DeleteGroup()
 end
---atk
-function s.atkfilter(c,tp)
-	return c:IsRace(RACE_DRAGON) and c:IsSetCard(0x499)
+--equip
+function s.eqfilter(c,ec)
+	return c:IsType(TYPE_EQUIP+TYPE_TRAP) and c:IsSetCard(0x499)
 end
-function s.op(e,tp,eg,ep,ev,re,r,rp)
+function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0
+		and Duel.IsExistingMatchingCard(s.eqfilter,tp,0x13,0,1,nil,e:GetHandler()) end
+	Duel.SetOperationInfo(0,CATEGORY_EQUIP,nil,1,tp,0x13)
+end
+function s.eqlimit(e,c)
+	return c:GetControler()==e:GetHandlerPlayer() or e:GetHandler():GetEquipTarget()==c
+end
+function s.eqop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
-	local g=Duel.GetMatchingGroup(aux.FaceupFilter(s.atkfilter),tp,LOCATION_REMOVED,0,nil)
-	if #g>0 and c:IsFaceup() and c:IsRelateToEffect(e) then
-		local atk=g:GetSum(Card.GetAttack)
-		local e5=Effect.CreateEffect(c)
-		e5:SetType(EFFECT_TYPE_SINGLE)
-		e5:SetCode(EFFECT_UPDATE_ATTACK)
-		e5:SetValue(atk)
-		e5:SetReset(RESET_EVENT+RESETS_STANDARD_DISABLE)
-		c:RegisterEffect(e5)
+	if Duel.GetLocationCount(tp,LOCATION_SZONE)<=0 or c:IsFacedown() or not c:IsRelateToEffect(e) then return end
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_EQUIP)
+	local ec=Duel.SelectMatchingCard(tp,s.eqfilter,tp,0x13,0,1,1,nil):GetFirst()
+	if ec then
+		Duel.Equip(tp,ec,c,true)
+		local e1=Effect.CreateEffect(ec)
+		e1:SetType(EFFECT_TYPE_SINGLE)
+		e1:SetCode(EFFECT_EQUIP_LIMIT)
+		e1:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+		e1:SetValue(s.eqlimit)
+		e1:SetReset(RESET_EVENT|RESETS_STANDARD)
+		ec:RegisterEffect(e1)
 	end
 end

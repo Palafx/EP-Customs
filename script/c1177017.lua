@@ -79,8 +79,7 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetPossibleOperationInfo(0,CATEGORY_TOGRAVE,nil,1,PLAYER_ALL,LOCATION_HAND)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
-	if Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)>0 and Duel.IsChainDisablable(0)
-		and Duel.SelectYesNo(1-tp,aux.Stringid(id,4)) then
+	if Duel.GetFieldGroupCount(tp,0,LOCATION_HAND)>0 and Duel.IsChainDisablable(0) and Duel.SelectYesNo(1-tp,aux.Stringid(id,4)) then
 		Duel.DiscardHand(1-tp,aux.TRUE,1,1,REASON_EFFECT+REASON_DISCARD)
 		return
 	end
@@ -88,9 +87,9 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetLabel()==1 then ty=TYPE_SPELL
 	elseif e:GetLabel()==2 then ty=TYPE_TRAP end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-	local g1=Duel.SelectMatchingCard(tp,Card.IsType,tp,LOCATION_DECK,0,1,1,nil,ty)
+	local g1=Duel.SelectMatchingCard(tp,Card.IsType,tp,LOCATION_HAND,0,1,1,nil,ty)
 	Duel.Hint(HINT_SELECTMSG,1-tp,HINTMSG_TOGRAVE)
-	local g2=Duel.SelectMatchingCard(1-tp,Card.IsType,1-tp,LOCATION_DECK,0,1,1,nil,ty)
+	local g2=Duel.SelectMatchingCard(1-tp,Card.IsType,1-tp,LOCATION_HAND,0,1,1,nil,ty)
 	g1:Merge(g2)
 	Duel.SendtoGrave(g1,REASON_EFFECT)
 	Duel.BreakEffect()

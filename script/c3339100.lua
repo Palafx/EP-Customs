@@ -43,6 +43,18 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if #sg~=2 then return end
 	Duel.SendtoHand(sg,nil,REASON_EFFECT)
 	Duel.ConfirmCards(1-tp,sg)
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_FIELD)
+	e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+	e1:SetTargetRange(1,0)
+	e1:SetTarget(s.splimit)
+	e1:SetReset(RESET_PHASE+PHASE_END)
+	Duel.RegisterEffect(e1,tp)
+	aux.RegisterClientHint(e:GetHandler(),nil,tp,1,0,aux.Stringid(id,5),nil)
+end
+function s.splimit(e,c)
+	return not c:IsRitualMonster()
 end
 --add ritual Spell
 function s.thcost(e,tp,eg,ep,ev,re,r,rp,chk)

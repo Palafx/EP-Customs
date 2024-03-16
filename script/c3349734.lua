@@ -7,12 +7,12 @@ function s.initial_effect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	c:RegisterEffect(e1)
-	--inactivatable
+	--Prevent response to the activation of your Spell/Traps
 	local e2=Effect.CreateEffect(c)
-	e2:SetType(EFFECT_TYPE_FIELD)
-	e2:SetCode(EFFECT_CANNOT_INACTIVATE)
+	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e2:SetCode(EVENT_CHAINING)
 	e2:SetRange(LOCATION_FZONE)
-	e2:SetValue(s.efilter)
+	e2:SetOperation(s.chainop)
 	c:RegisterEffect(e2)
 	--token
 	local e3=Effect.CreateEffect(c)
@@ -29,10 +29,13 @@ end
 s.listed_names={id}
 s.listed_series={SET_GISHKI}
 --cannot respond
-function s.efilter(e,ct)
-	local p=e:GetHandlerPlayer()
-	local te,tp=Duel.GetChainInfo(ct,CHAININFO_TRIGGERING_EFFECT,CHAININFO_TRIGGERING_PLAYER)
-	return p==tp and te:IsHasCategory(CATEGORY_RITUAL_SUMMON)
+function s.chainop(e,tp,eg,ep,ev,re,r,rp)
+	if re:IsSpellEffect() and re:GetType()==TYPE_RITUAL and re:GetOwnerPlayer()==tp then
+		Duel.SetChainLimit(s.chainlm)
+	end
+end
+function s.chainlm(e,ep,tp)
+	return ep==tp or not e:IsMonsterEffect()
 end
 --token
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)

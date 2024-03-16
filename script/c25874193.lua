@@ -1,5 +1,5 @@
 --Yrakle, The Synchronized Atrocity - Errata
---Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	c:EnableReviveLimit()
@@ -10,7 +10,7 @@ function s.initial_effect(c)
 	e0:SetDescription(aux.Stringid(id,0))
 	e0:SetCategory(CATEGORY_SEARCH+CATEGORY_TOHAND)
 	e0:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-  e0:SetCountLimit(1,id)
+	e0:SetCountLimit(1,id)
 	e0:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e0:SetProperty(EFFECT_FLAG_DELAY)
 	e0:SetCondition(s.tgcon)
@@ -22,7 +22,7 @@ function s.initial_effect(c)
 	e1:SetDescription(aux.Stringid(id,1))
 	e1:SetCategory(CATEGORY_TOGRAVE)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-  e1:SetCountLimit(1,id)
+	e1:SetCountLimit(1,id)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e1:SetProperty(EFFECT_FLAG_DELAY)
 	e1:SetCondition(s.tgcon)
@@ -43,18 +43,19 @@ function s.initial_effect(c)
 	e2:SetTarget(s.target(TYPE_SYNCHRO,Card.IsSynchroSummonable))
 	e2:SetOperation(s.operation(TYPE_SYNCHRO,Card.IsSynchroSummonable,function(sc,g,tp) Synchro.Send=2 Duel.SynchroSummon(tp,sc,nil,g,#g,#g) end))
 	c:RegisterEffect(e2)
-  --Draw
+	--Draw
 	local e5=Effect.CreateEffect(c)
 	e5:SetDescription(aux.Stringid(id,1))
 	e5:SetCategory(CATEGORY_DRAW)
 	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-  e5:SetCountLimit(1,{id,2})
+	e5:SetCountLimit(1,{id,2})
 	e5:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
 	e5:SetCode(EVENT_REMOVE)
 	e5:SetTarget(s.drtg)
 	e5:SetOperation(s.drop)
 	c:RegisterEffect(e5)
 end
+s.listed_names={65196094,88332693,80280737,id}
 --add
 function s.thfilter(c)
 	return (c:IsCode(65196094) or c:IsCode(88332693) or c:IsCode(80280737))  and c:IsAbleToHand()
@@ -107,14 +108,14 @@ function s.aclimit(e,re,tp)
 end
 --draw
 function s.drtg(e,tp,eg,ep,ev,re,r,rp,chk)
-  if chk==0 then return true end
-  Duel.SetTargetPlayer(tp)
-  Duel.SetTargetParam(1)
-  Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
+	if chk==0 then return true end
+	Duel.SetTargetPlayer(tp)
+	Duel.SetTargetParam(1)
+	Duel.SetOperationInfo(0,CATEGORY_DRAW,nil,0,tp,1)
 end
 function s.drop(e,tp,eg,ep,ev,re,r,rp)
-  local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
-  Duel.Draw(p,d,REASON_EFFECT)
+	local p,d=Duel.GetChainInfo(0,CHAININFO_TARGET_PLAYER,CHAININFO_TARGET_PARAM)
+	Duel.Draw(p,d,REASON_EFFECT)
 end
 --THIS WHOLE THING JUST FOR THE SYNCHRO SUMMON WTF
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)

@@ -50,7 +50,7 @@ function s.destg(e,tp,eg,ep,ev,re,r,rp,chk)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,dg,1,tp,LOCATION_MZONE)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)
-	local ct=Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_MZONE,LOCATION_MZONE,nil.TOKEN_MECHA_PHANTOM_BEAST)
+	local ct=Duel.GetMatchingGroupCount(Card.IsCode,tp,LOCATION_MZONE,LOCATION_MZONE,nil,TOKEN_MECHA_PHANTOM_BEAST)
 	if ct==0 then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
 	local dg=Duel.SelectMatchingCard(tp,nil,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,ct,nil)

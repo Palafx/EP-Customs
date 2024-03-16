@@ -1,6 +1,5 @@
 --Adaptive Trait - Acclimation
 --Scripted By EP Custom Cards and Naim
-
 local s,id=GetID()
 function s.initial_effect(c)
 	--activate and equip
@@ -22,6 +21,7 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_QUICK_O)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetRange(LOCATION_SZONE)
+	e2:SetHintTiming(0,TIMINGS_CHECK_MONSTER_E)
 	e2:SetCountLimit(1,id)
 	e2:SetCost(s.thcost)
 	e2:SetTarget(s.target)
