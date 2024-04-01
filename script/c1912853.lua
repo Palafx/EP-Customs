@@ -2,6 +2,7 @@
 --Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
+	--Activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
@@ -9,23 +10,25 @@ function s.initial_effect(c)
 	e1:SetCountLimit(1,id)
 	e1:SetOperation(s.activate)
 	c:RegisterEffect(e1)
-  --sp tokens
+	--sp tokens
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
 	e2:SetType(EFFECT_TYPE_IGNITION)
-  e2:SetRange(LOCATION_SZONE)
-  e2:SetCountLimit(1)
-  e2:SetCost(s.cost)
+	e2:SetRange(LOCATION_SZONE)
+	e2:SetCountLimit(1)
+	e2:SetCost(s.cost)
 	e2:SetTarget(s.target)
 	e2:SetOperation(s.operation)
 	c:RegisterEffect(e2)
 end
-s.listed_series={0x50}
-s.counter_place_list={0x1009}
+s.listed_names={72677437,8062132,id}
+s.listed_series={SET_VENOM}
+s.counter_place_list={COUNTER_VENOM}
 --search
 function s.filter(c)
-	return (c:IsSetCard(0x50) or c:IsCode(72677437,8062132) or c:ListsCode(72677437,8062132) or c:ListsCounter(0x1009)) and not c:IsCode(id) and c:IsAbleToHand()
+	return (c:IsSetCard(SET_VENOM) or c:IsCode(72677437,8062132) or c:ListsCode(72677437,8062132) or c:ListsArchetype(SET_VENOM))
+		and not c:IsCode(id) and c:IsAbleToHand()
 end
 function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	if not e:GetHandler():IsRelateToEffect(e) then return end
@@ -39,8 +42,8 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 end
 --sp tokens
 function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsCanRemoveCounter(tp,1,1,0x1009,2,REASON_COST) end
-	Duel.RemoveCounter(tp,1,1,0x1009,2,REASON_COST)
+	if chk==0 then return Duel.IsCanRemoveCounter(tp,1,1,COUNTER_VENOM,2,REASON_COST) end
+	Duel.RemoveCounter(tp,1,1,COUNTER_VENOM,2,REASON_COST)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT)
