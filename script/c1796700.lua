@@ -35,6 +35,14 @@ function s.initial_effect(c)
 	e4:SetCondition(function (e) return e:GetHandler():GetBattleTarget()~=nil end)
 	e4:SetValue(aux.ChangeBattleDamage(1,DOUBLE_DAMAGE))
 	c:RegisterEffect(e4)
+	--Banish 1 Tuner from your GY instead of this card being destroyed by a card effect
+	local e5=Effect.CreateEffect(c)
+	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
+	e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
+	e5:SetCode(EFFECT_DESTROY_REPLACE)
+	e5:SetRange(LOCATION_MZONE)
+	e5:SetTarget(s.desreptg)
+	c:RegisterEffect(e5)
 end
 --negate
 function s.negcon(e,tp,eg,ep,ev,re,r,rp)
@@ -62,4 +70,19 @@ function s.atkfilter(c)
 end
 function s.atkval(e,c)
 	return Duel.GetMatchingGroup(s.atkfilter,e:GetHandlerPlayer(),LOCATION_GRAVE,0,nil):GetClassCount(Card.GetCode)*300
+end
+--prevent destruction
+function s.repfilter(c)
+	return c:IsType(TYPE_TUNER) and c:IsAbleToRemove() and aux.SpElimFilter(c,true)
+end
+function s.desreptg(e,tp,eg,ep,ev,re,r,rp,chk)
+	local c=e:GetHandler()
+	if chk==0 then return not c:IsReason(REASON_REPLACE) and c:IsReason(REASON_EFFECT)
+		and Duel.IsExistingMatchingCard(s.repfilter,tp,LOCATION_MZONE|LOCATION_GRAVE,0,2,c) end
+	if Duel.SelectEffectYesNo(tp,c,96) then
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESREPLACE)
+		local g=Duel.SelectMatchingCard(tp,s.repfilter,tp,LOCATION_MZONE|LOCATION_GRAVE,0,2,2,c)
+		Duel.Remove(g,POS_FACEUP,REASON_EFFECT|REASON_REPLACE)
+		return true
+	else return false end
 end
