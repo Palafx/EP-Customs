@@ -42,11 +42,14 @@ function s.doubcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ)
 end
 function s.filter(c)
-	return c:IsRace(RACE_FIEND) and c:IsAttribute(ATTRIBUTE_DARK)
+	return c:IsRace(RACE_FIEND) and c:IsAttribute(ATTRIBUTE_DARK) and c:GetAttack()>0
+end
+function s.filter2(c)
+	return c:GetAttack()>0
 end
 function s.doubtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil) 
-		or Duel.IsExistingMatchingCard(aux.TRUE,tp,0,LOCATION_MZONE,1,nil) end
+		or Duel.IsExistingMatchingCard(s.filter2,tp,0,LOCATION_MZONE,1,nil) end
 end
 function s.doubop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
