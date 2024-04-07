@@ -1,5 +1,5 @@
 --Violet-Eyes Twilight Dragon
---Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--Fusion Summon

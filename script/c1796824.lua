@@ -2,7 +2,7 @@
 --Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
-	--Special Summon 2 copies
+	--Special Summon 2 "Dust Flockatrice" and 2 "Petrify Tokens"
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_TOKEN)
@@ -22,10 +22,10 @@ function s.spfilter(c,e,tp)
 	return c:IsCode(id) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) and Duel.GetLocationCount(tp,LOCATION_MZONE)>1
-		and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK+LOCATION_HAND,0,2,nil,e,tp) end
+	if chk==0 then return not Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT)
+		and Duel.GetLocationCount(tp,LOCATION_MZONE)>1 and Duel.IsExistingMatchingCard(s.spfilter,tp,LOCATION_DECK+LOCATION_HAND,0,2,nil,e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,2,tp,LOCATION_DECK+LOCATION_HAND)
-  Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,2,0,0)
+	Duel.SetPossibleOperationInfo(0,CATEGORY_TOKEN,nil,2,0,0)
 end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	if Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) then return end
@@ -35,18 +35,19 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SPSUMMON)
 	local sg=g:Select(tp,2,2,nil)
 	if Duel.SpecialSummon(sg,0,tp,tp,false,false,POS_FACEUP_DEFENSE) and Duel.SelectYesNo(tp,aux.Stringid(id,1)) 
-    and Duel.GetLocationCount(1-tp,LOCATION_MZONE,tp)>1 and Duel.IsPlayerCanSpecialSummonMonster(1-tp,id+1,0,TYPES_TOKEN,2500,0,6,RACE_ROCK,ATTRIBUTE_EARTH,POS_FACEUP,1-tp) then
-    for i=1,2 do
-      local token=Duel.CreateToken(1-tp,id+1)
-      Duel.SpecialSummonStep(token,0,tp,1-tp,false,false,POS_FACEUP)
-      --Cannot attack
-      local e0=Effect.CreateEffect(e:GetHandler())
-	    e0:SetType(EFFECT_TYPE_SINGLE)
-	    e0:SetCode(EFFECT_CANNOT_ATTACK)
-	    e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
-	    e0:SetReset(RESET_EVENT+RESETS_STANDARD)
-	    token:RegisterEffect(e0,true)
-      --Cannot be tributed for a tribute summon
+    and Duel.GetLocationCount(1-tp,LOCATION_MZONE,tp)>1
+	and Duel.IsPlayerCanSpecialSummonMonster(1-tp,id+1,0,TYPES_TOKEN,2500,0,6,RACE_ROCK,ATTRIBUTE_EARTH,POS_FACEUP,1-tp) then
+		for i=1,2 do
+			local token=Duel.CreateToken(1-tp,id+1)
+			Duel.SpecialSummonStep(token,0,tp,1-tp,false,false,POS_FACEUP)
+			--Cannot attack
+			local e0=Effect.CreateEffect(e:GetHandler())
+			e0:SetType(EFFECT_TYPE_SINGLE)
+			e0:SetCode(EFFECT_CANNOT_ATTACK)
+			e0:SetProperty(EFFECT_FLAG_CANNOT_DISABLE)
+			e0:SetReset(RESET_EVENT+RESETS_STANDARD)
+			token:RegisterEffect(e0,true)
+			--Cannot be tributed for a tribute summon
 			local e1=Effect.CreateEffect(e:GetHandler())
 			e1:SetDescription(3304)
 			e1:SetType(EFFECT_TYPE_SINGLE)
@@ -82,7 +83,17 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 			e4:SetValue(1)
 			e4:SetReset(RESET_EVENT+RESETS_STANDARD)
 			token:RegisterEffect(e4,true)
-    end
-    Duel.SpecialSummonComplete()
-  end
+		end
+		Duel.SpecialSummonComplete()
+		--Cannot Special Summon monsters, except Xyz Monsters until the end of the turn
+		local e1=Effect.CreateEffect(c)
+		e1:SetDescription(aux.Stringid(id,0))
+		e1:SetType(EFFECT_TYPE_FIELD)
+		e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET+EFFECT_FLAG_CLIENT_HINT)
+		e1:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
+		e1:SetTargetRange(1,0)
+		e1:SetTarget(function(e,c) return not c:IsType(TYPE_XYZ) end)
+		e1:SetReset(RESET_PHASE|PHASE_END,1)
+		Duel.RegisterEffect(e1,tp)
+	end
 end

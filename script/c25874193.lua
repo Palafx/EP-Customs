@@ -1,14 +1,14 @@
 --Yrakle, The Synchronized Atrocity - Errata
 --Scripted by EP Custom Cards
 local s,id=GetID()
-function s.initial_effect(c)
+function s.initial_effect(c)	
+	--Synchro Summon
 	c:EnableReviveLimit()
-	--Synchro
 	Synchro.AddProcedure(c,nil,1,1,Synchro.NonTuner(nil),1,99)
-	--add card
+	--Search or Send to GY
 	local e0=Effect.CreateEffect(c)
 	e0:SetDescription(aux.Stringid(id,0))
-	e0:SetCategory(CATEGORY_SEARCH+CATEGORY_TOHAND)
+	e0:SetCategory(CATEGORY_SEARCH+CATEGORY_TOHAND+CATEGORY_TOGRAVE)
 	e0:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e0:SetCountLimit(1,id)
 	e0:SetCode(EVENT_SPSUMMON_SUCCESS)
@@ -17,19 +17,7 @@ function s.initial_effect(c)
 	e0:SetTarget(s.thtg)
 	e0:SetOperation(s.thop)
 	c:RegisterEffect(e0)
-	--Send monster to GY
-	local e1=Effect.CreateEffect(c)
-	e1:SetDescription(aux.Stringid(id,1))
-	e1:SetCategory(CATEGORY_TOGRAVE)
-	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e1:SetCountLimit(1,id)
-	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e1:SetProperty(EFFECT_FLAG_DELAY)
-	e1:SetCondition(s.tgcon)
-	e1:SetTarget(s.tgtg)
-	e1:SetOperation(s.tgop)
-	c:RegisterEffect(e1)
-	--Synchro summon
+	--Synchro Summon
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,0))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
@@ -57,50 +45,79 @@ function s.initial_effect(c)
 end
 s.listed_names={65196094,88332693,80280737,id}
 --add
-function s.thfilter(c)
-	return (c:IsCode(65196094) or c:IsCode(88332693) or c:IsCode(80280737))  and c:IsAbleToHand()
-end
-function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK+LOCATION_GRAVE)
-end
-function s.thop(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-	local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil)
-	if #g>0 then
-		Duel.SendtoHand(g,nil,REASON_EFFECT)
-		Duel.ConfirmCards(1-tp,g)
-	end
-end
---send monster to gy
 function s.tgcon(e,tp,eg,ep,ev,re,r,rp)
 	return e:GetHandler():IsSummonType(SUMMON_TYPE_SYNCHRO)
+end
+function s.thfilter(c)
+	return (c:IsCode(65196094) or c:IsCode(88332693) or c:IsCode(80280737))  and c:IsAbleToHand()
 end
 function s.tgfilter(c)
 	return c:IsType(TYPE_MONSTER) and c:IsAbleToGrave()
 end
-function s.tgtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_DECK,0,1,nil) end
-	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,nil,1,tp,LOCATION_DECK)
+function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil)
+		or Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_DECK,0,1,nil) end
+	Duel.SetPossibleOperationInfo(0,CATEGORY_TOHAND,nil,1,tp,LOCATION_DECK|LOCATION_GRAVE)
+	Duel.SetPossibleOperationInfo(0,CATEGORY_TOGRAVE,nil,1,tp,LOCATION_DECK)
 end
-function s.tgop(e,tp,eg,ep,ev,re,r,rp)
-	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
-	local g=Duel.SelectMatchingCard(tp,s.tgfilter,tp,LOCATION_DECK,0,1,1,nil)
-	if #g>0 and Duel.SendtoGrave(g,REASON_EFFECT) then
-		--Cannot activate its effects
-		local tc=g:GetFirst()
-        if tc:IsLocation(LOCATION_GRAVE) then
-            local e1=Effect.CreateEffect(e:GetHandler())
-            e1:SetType(EFFECT_TYPE_FIELD)
-            e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-            e1:SetCode(EFFECT_CANNOT_ACTIVATE)
-            e1:SetTargetRange(1,0)
-            e1:SetValue(s.aclimit)
-            e1:SetLabelObject(tc)
-            e1:SetReset(RESET_PHASE+PHASE_END)
-            Duel.RegisterEffect(e1,tp)
-        end
-    end
+function s.thop(e,tp,eg,ep,ev,re,r,rp)
+	if Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil)
+			and Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_DECK,0,1,nil) then 
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_EFFECT)
+		local op=Duel.SelectOption(tp,aux.Stringid(id,0),aux.Stringid(id,1))
+		e:SetLabel(op)
+		if op==0 then
+			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+			local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil)
+			if #g>0 then
+				Duel.SendtoHand(g,nil,REASON_EFFECT)
+				Duel.ConfirmCards(1-tp,g)
+			end
+		else
+			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+			local g=Duel.SelectMatchingCard(tp,s.tgfilter,tp,LOCATION_DECK,0,1,1,nil)
+			if #g>0 and Duel.SendtoGrave(g,REASON_EFFECT) then
+				--Cannot activate its effects
+				local tc=g:GetFirst()
+				if tc:IsLocation(LOCATION_GRAVE) then
+					local e1=Effect.CreateEffect(e:GetHandler())
+					e1:SetType(EFFECT_TYPE_FIELD)
+					e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+					e1:SetCode(EFFECT_CANNOT_ACTIVATE)
+					e1:SetTargetRange(1,0)
+					e1:SetValue(s.aclimit)
+					e1:SetLabelObject(tc)
+					e1:SetReset(RESET_PHASE+PHASE_END)
+					Duel.RegisterEffect(e1,tp)
+				end
+			end
+		end
+	elseif Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,nil) then
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+		local g=Duel.SelectMatchingCard(tp,s.thfilter,tp,LOCATION_DECK+LOCATION_GRAVE,0,1,1,nil)
+		if #g>0 then
+			Duel.SendtoHand(g,nil,REASON_EFFECT)
+			Duel.ConfirmCards(1-tp,g)
+		end
+	else
+		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+		local g=Duel.SelectMatchingCard(tp,s.tgfilter,tp,LOCATION_DECK,0,1,1,nil)
+		if #g>0 and Duel.SendtoGrave(g,REASON_EFFECT) then
+			--Cannot activate its effects
+			local tc=g:GetFirst()
+			if tc:IsLocation(LOCATION_GRAVE) then
+				local e1=Effect.CreateEffect(e:GetHandler())
+				e1:SetType(EFFECT_TYPE_FIELD)
+				e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+				e1:SetCode(EFFECT_CANNOT_ACTIVATE)
+				e1:SetTargetRange(1,0)
+				e1:SetValue(s.aclimit)
+				e1:SetLabelObject(tc)
+				e1:SetReset(RESET_PHASE+PHASE_END)
+				Duel.RegisterEffect(e1,tp)
+			end
+		end
+	end
 end
 function s.aclimit(e,re,tp)
 	local tc=e:GetLabelObject()
@@ -158,9 +175,11 @@ function s.target(montype,chkfun)
 	return function(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 		local exg=Duel.GetMatchingGroup(s.filter(montype,chkfun),tp,LOCATION_EXTRA,0,nil,nil,tp)
 		local cancelcon=s.rescon(exg,chkfun)
-		if chkc then return chkc:IsControler(tp) and c:IsLocation(LOCATION_GRAVE) and chkc:IsCanBeSpecialSummoned(e,0,tp,false,false) and cancelcon(Group.FromCards(chkc)) end
+		if chkc then return chkc:IsControler(tp) and c:IsLocation(LOCATION_GRAVE) and chkc:IsCanBeSpecialSummoned(e,0,tp,false,false) 
+			and cancelcon(Group.FromCards(chkc)) end
 		local mg=Duel.GetMatchingGroup(s.matfilter,tp,LOCATION_GRAVE,0,nil,e,tp)
-		local min=math.min(math.min(Duel.GetLocationCount(tp,LOCATION_MZONE),Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) and 1 or 99),1)
+		local min=math.min(math.min(Duel.GetLocationCount(tp,LOCATION_MZONE),Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) 
+			and 1 or 99),1)
 		local ft=Duel.GetLocationCount(tp,LOCATION_MZONE)
 		if ft>3 then ft=3 end
 		if chk==0 then return min>0 and Duel.IsPlayerCanSpecialSummonCount(tp,2)
@@ -174,17 +193,10 @@ end
 function s.operation(montype,chkfun,fun)
 	return function(e,tp,eg,ep,ev,re,r,rp)
 		local g=Duel.GetTargetCards(e):Filter(s.relfilter,nil,e,tp)
-		if Duel.GetLocationCount(tp,LOCATION_MZONE)<#g or #g==0 or (Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) and #g>1) then return end
+		if Duel.GetLocationCount(tp,LOCATION_MZONE)<#g or #g==0 
+			or (Duel.IsPlayerAffectedByEffect(tp,CARD_BLUEEYES_SPIRIT) and #g>1) then return end
 		for tc in aux.Next(g) do
 			Duel.SpecialSummonStep(tc,0,tp,tp,false,false,POS_FACEUP_DEFENSE)
-			--[[ local e1=Effect.CreateEffect(e:GetHandler())
-			e1:SetType(EFFECT_TYPE_SINGLE)
-			e1:SetCode(EFFECT_DISABLE)
-			e1:SetReset(RESET_EVENT+RESETS_STANDARD)
-			tc:RegisterEffect(e1)
-			local e2=e1:Clone()
-			e2:SetCode(EFFECT_DISABLE_EFFECT)
-			tc:RegisterEffect(e2) ]]
 		end
 		Duel.SpecialSummonComplete()
 		Duel.BreakEffect()

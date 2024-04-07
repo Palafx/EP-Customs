@@ -1,35 +1,37 @@
----	Grokle, The Polymer Construct -- Errata
-	-- Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Grokle, The Polymer Construct -- Errata
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
---	ADD NON TUNER TO HAND
+	--Search
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
 	e1:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e1:SetProperty(EFFECT_FLAG_DELAY)
 	e1:SetCode(EVENT_SPSUMMON_SUCCESS)
-	e1:SetCountLimit(1,id)
+	e1:SetCountLimit(1,{id,1})
 	e1:SetTarget(s.thtg)
 	e1:SetOperation(s.thop)
 	c:RegisterEffect(e1)
-		local e2=e1:Clone()
-		e2:SetCode(EVENT_SUMMON_SUCCESS)
-		c:RegisterEffect(e2)
--- FUSION
-local e4=Effect.CreateEffect(c)
-	e4:SetDescription(aux.Stringid(id,0))
-	e4:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_FUSION_SUMMON)
-	e4:SetType(EFFECT_TYPE_QUICK_O)
-	e4:SetCode(EVENT_FREE_CHAIN)
-	e4:SetRange(LOCATION_MZONE)
-	e4:SetCountLimit(1,id+100)
-	e4:SetCondition(s.fcon)
-	e4:SetTarget(Fusion.SummonEffTG())
-	e4:SetOperation(Fusion.SummonEffOP())
-	c:RegisterEffect(e4)
+	local e2=e1:Clone()
+	e2:SetCode(EVENT_SUMMON_SUCCESS)
+	c:RegisterEffect(e2)
+	--Fusion Summon
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,0))
+	e3:SetCategory(CATEGORY_SPECIAL_SUMMON+CATEGORY_FUSION_SUMMON)
+	e3:SetType(EFFECT_TYPE_QUICK_O)
+	e3:SetCode(EVENT_FREE_CHAIN)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetHintTiming(0,TIMING_MAIN_END)
+	e3:SetCountLimit(1,{id,2})
+	e3:SetCondition(s.fcon)
+	e3:SetTarget(Fusion.SummonEffTG())
+	e3:SetOperation(Fusion.SummonEffOP())
+	c:RegisterEffect(e3)
 end
--- add monster
+s.listed_names={id}
+--search
 function s.thfilter(c)
 	return not c:IsType(TYPE_TUNER) and c:IsLevelBelow(4) and c:IsAbleToHand()
 end
@@ -71,7 +73,7 @@ end
 function s.aclimit(e,re,tp)
 	return re:GetHandler():IsCode(e:GetLabel()) and re:IsActiveType(TYPE_MONSTER)
 end
--- fusion
+--fusion
 function s.fcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsMainPhase()
 end

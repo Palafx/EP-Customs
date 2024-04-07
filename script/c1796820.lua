@@ -1,13 +1,14 @@
---- Cloudian Realm
+--Cloudian Realm
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
---	Activate and Set
+	--Activate and Set
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_ACTIVATE)
 	e2:SetCode(EVENT_FREE_CHAIN)
 	e2:SetOperation(s.activate)
 	c:RegisterEffect(e2)
--- Increase LP
+	--Increase LP
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_RECOVER)
@@ -15,11 +16,11 @@ function s.initial_effect(c)
 	e1:SetCode(EVENT_PHASE+PHASE_END)
 	e1:SetRange(LOCATION_SZONE)
 	e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
-  e1:SetCountLimit(1)
+	e1:SetCountLimit(1)
 	e1:SetTarget(s.rectg)
 	e1:SetOperation(s.recop)
 	c:RegisterEffect(e1)
---Special summon nimbusman
+	--Special summon nimbusman
 	local e3=Effect.CreateEffect(c)
 	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e3:SetType(EFFECT_TYPE_IGNITION)
@@ -30,8 +31,10 @@ function s.initial_effect(c)
 	e3:SetOperation(s.operation)
 	c:RegisterEffect(e3)
 end
----------------------------------
---	set
+s.listed_names={90135989,20003527}
+s.listed_series={SET_CLOUDIAN}
+s.counter_list={0X1019}
+--set
 function s.filter(c)
 	return c:IsCode(90135989) and c:IsSSetable()
 end
@@ -44,7 +47,7 @@ if not e:GetHandler():IsRelateToEffect(e) then return end
 	Duel.SSet(tp,g:GetFirst())
 	end
 end
--- recover
+--recover
 function s.fil(c)
 	return c:GetCounter(0x1019)
 end
