@@ -32,17 +32,9 @@ function s.initial_effect(c)
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_SINGLE)
 	e4:SetCode(EFFECT_CHANGE_BATTLE_DAMAGE)
-	e4:SetCondition(function (e) return e:GetHandler():GetBattleTarget()~=nil end)
+	e4:SetCondition(function (e) return e:GetHandler():GetBattleTarget()~=nil and Duel.GetLP(tp)<Duel.GetLP(1-tp) end)
 	e4:SetValue(aux.ChangeBattleDamage(1,DOUBLE_DAMAGE))
 	c:RegisterEffect(e4)
-	--Banish 1 Tuner from your GY instead of this card being destroyed by a card effect
-	local e5=Effect.CreateEffect(c)
-	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_CONTINUOUS)
-	e5:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e5:SetCode(EFFECT_DESTROY_REPLACE)
-	e5:SetRange(LOCATION_MZONE)
-	e5:SetTarget(s.desreptg)
-	c:RegisterEffect(e5)
 end
 --negate
 function s.negcon(e,tp,eg,ep,ev,re,r,rp)
@@ -69,7 +61,7 @@ function s.atkfilter(c)
 	return c:IsType(TYPE_TUNER) and c:IsMonster()
 end
 function s.atkval(e,c)
-	return Duel.GetMatchingGroup(s.atkfilter,e:GetHandlerPlayer(),LOCATION_GRAVE,0,nil):GetClassCount(Card.GetCode)*300
+	return Duel.GetMatchingGroup(s.atkfilter,e:GetHandlerPlayer(),LOCATION_GRAVE,0,nil):GetClassCount(Card.GetCode)*100
 end
 --prevent destruction
 function s.repfilter(c)

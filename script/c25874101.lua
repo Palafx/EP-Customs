@@ -74,7 +74,7 @@ function s.tkcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()~=tp and eg:IsExists(s.tkfilter,1,nil,tp)
 end
 function s.tktg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsPlayerCanSpecialSummonMonster(tp,id+1,0x134,TYPES_TOKEN,1500,1500,4,RACE_FAIRY,ATTRIBUTE_LIGHT) 
+	if chk==0 then return Duel.IsPlayerCanSpecialSummonMonster(tp,38053382,0x134,TYPES_TOKEN,1500,1500,4,RACE_FAIRY,ATTRIBUTE_LIGHT) 
 		and Duel.GetLocationCount(tp,LOCATION_MZONE)>0 end
 	local ft=1
 	Duel.SetOperationInfo(0,CATEGORY_TOKEN,nil,ft,tp,0)
@@ -83,11 +83,11 @@ end
 function s.tkop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	local ft=1
-	if ft<=0 or not Duel.IsPlayerCanSpecialSummonMonster(tp,id+1,0x134,TYPES_TOKEN,1500,1500,4,RACE_FAIRY,ATTRIBUTE_LIGHT) then return end
+	if ft<=0 or not Duel.IsPlayerCanSpecialSummonMonster(tp,38053382,0x134,TYPES_TOKEN,1500,1500,4,RACE_FAIRY,ATTRIBUTE_LIGHT) then return end
 	local fid=c:GetFieldID()
 	local g=Group.CreateGroup()
 	for i=1,ft do
-		local token=Duel.CreateToken(tp,id+1)
+		local token=Duel.CreateToken(tp,38053382)
 		Duel.SpecialSummonStep(token,0,tp,tp,false,false,POS_FACEUP_ATTACK)
 		token:RegisterFlagEffect(id,RESET_EVENT+RESETS_STANDARD,0,1,fid)
 		g:AddCard(token)

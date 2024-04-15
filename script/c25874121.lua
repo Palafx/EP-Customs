@@ -28,14 +28,6 @@ function s.initial_effect(c)
 		ge1:SetOperation(s.regop)
 		Duel.RegisterEffect(ge1,0)
 	end)
-	--immune
-	local e1=Effect.CreateEffect(c)
-	e1:SetType(EFFECT_TYPE_SINGLE)
-	e1:SetProperty(EFFECT_FLAG_SINGLE_RANGE)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetCode(EFFECT_IMMUNE_EFFECT)
-	e1:SetValue(s.efilter)
-	c:RegisterEffect(e1)
 	--Cannot attack unless equipped
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE)
@@ -161,10 +153,6 @@ function s.reg(c)
 end
 function s.regop(e,tp,eg,ep,ev,re,r,rp)
 	eg:ForEach(s.reg)
-end
---unaffected
-function s.efilter(e,te)
-	return te:GetOwnerPlayer()~=e:GetHandlerPlayer()
 end
 --cannot attack unles equipped
 function s.eqcon(e)
