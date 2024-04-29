@@ -58,6 +58,27 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 	if e:GetHandler():IsRelateToEffect(e) then
 		Duel.SpecialSummon(e:GetHandler(),0,tp,tp,false,false,POS_FACEUP)
 	end
+	--Banish 1 "Amorphage" card from your GY during the next End Phase
+	local e1=Effect.CreateEffect(e:GetHandler())
+	e1:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
+	e1:SetCode(EVENT_PHASE+PHASE_END)
+	e1:SetCountLimit(1)
+	e1:SetCondition(s.rmcon)
+	e1:SetOperation(s.rmop)
+	e1:SetReset(RESET_PHASE+PHASE_END+RESET_SELF_TURN)
+	Duel.RegisterEffect(e1,tp)
+end
+function s.rmfilter(c)
+	return c:IsSetCard(SET_AMORPHAGE) and c:IsAbleToRemove() and aux.SpElimFilter(c,true)
+end
+function s.rmcon(e,tp,eg,ep,ev,re,r,rp)
+	return Duel.IsTurnPlayer(tp) and Duel.IsExistingMatchingCard(s.rmfilter,tp,LOCATION_MZONE+LOCATION_GRAVE,0,1,nil)
+end
+function s.rmop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
+	local g=Duel.SelectMatchingCard(tp,s.rmfilter,tp,LOCATION_MZONE+LOCATION_GRAVE,0,1,1,nil)
+	if #g==0 then return end
+	Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
 end
 --atkcon
 function s.cfilter(c)

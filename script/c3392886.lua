@@ -103,8 +103,7 @@ function s.cfilter(c)
 	return c:IsFaceup() and c:IsSetCard(SET_AMORPHAGE)
 end
 function s.setcon(e,c)
-	if c==nil then return true end
-	local g=Duel.GetMatchingGroup(s.rainbowfilter,c:GetControler(),LOCATION_MZONE,0,nil)
+	local g=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_MZONE,0,nil)
 	local ct=g:GetClassCount(Card.GetCode)
 	return ct>1
 end

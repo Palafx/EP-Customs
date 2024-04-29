@@ -1,9 +1,19 @@
---Amorphage Treachery
+--Amorphage Defiance
 --Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
 	--pendulum summon
 	Pendulum.AddProcedure(c)
+	--Send to GY
+	local e1=Effect.CreateEffect(c)
+	e1:SetCategory(CATEGORY_TOGRAVE)
+	e1:SetType(EFFECT_TYPE_IGNITION)
+	e1:SetRange(LOCATION_MZONE)
+	e1:SetCountLimit(1)
+	e1:SetCost(s.tgcost)
+	e1:SetTarget(s.tgtg)
+	e1:SetOperation(s.tgop)
+	c:RegisterEffect(e1)
 	--maintenance cost
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_CONTINUOUS)
@@ -14,7 +24,6 @@ function s.initial_effect(c)
 	e2:SetCondition(s.descon)
 	e2:SetOperation(s.desop)
 	c:RegisterEffect(e2)
-	--special summon limit
 	local e3=Effect.CreateEffect(c)
 	e3:SetType(EFFECT_TYPE_FIELD)
 	e3:SetRange(LOCATION_MZONE)
@@ -26,7 +35,7 @@ function s.initial_effect(c)
 	--activation limit
 	local e4=Effect.CreateEffect(c)
 	e4:SetType(EFFECT_TYPE_FIELD)
-	e4:SetCode(EFFECT_CANNOT_SUMMON)
+	e4:SetCode(EFFECT_CANNOT_SPECIAL_SUMMON)
 	e4:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
 	e4:SetRange(LOCATION_PZONE)
 	e4:SetTargetRange(1,1)
@@ -35,23 +44,44 @@ function s.initial_effect(c)
 	c:RegisterEffect(e4)
 	--Lizard check
 	aux.addContinuousLizardCheck(c,LOCATION_MZONE,s.lizfilter,0xff,0xff)
-	--Tributed or destroyed
+	--Atk
 	local e5=Effect.CreateEffect(c)
-	e5:SetDescription(aux.Stringid(id,1))
-	e5:SetCategory(CATEGORY_DESTROY)
-	e5:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
-	e5:SetProperty(EFFECT_FLAG_DELAY)
-	e5:SetCode(EVENT_RELEASE)
-	e5:SetCountLimit(1,{id,1})
-	e5:SetTarget(s.sptg)
-	e5:SetOperation(s.spop)
+	e5:SetType(EFFECT_TYPE_FIELD)
+	e5:SetCode(EFFECT_UPDATE_ATTACK)
+	e5:SetRange(LOCATION_MZONE)
+	e5:SetTargetRange(LOCATION_MZONE,0)
+	e5:SetTarget(aux.TargetBoolFunction(Card.IsSetCard,SET_AMORPHAGE))
+	e5:SetCondition(s.atkcon)
+	e5:SetValue(1000)
 	c:RegisterEffect(e5)
+	--Def
 	local e6=e5:Clone()
-	e6:SetCode(EVENT_DESTROYED)
+	e6:SetCode(EFFECT_UPDATE_DEFENSE)
 	c:RegisterEffect(e6)
 end
 s.listed_names={id}
 s.listed_series={SET_AMORPHAGE}
+--send to GY
+function s.cfilter(c)
+	return c:IsSetCard(SET_AMORPHAGE)
+end
+function s.tgcost(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.cfilter,1,false,nil,nil) end
+	local g=Duel.SelectReleaseGroupCost(tp,s.cfilter,1,1,false,nil,nil)
+	Duel.Release(g,REASON_COST)
+end
+function s.tgtg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.IsExistingMatchingCard(Card.IsAbleToGrave,tp,0,LOCATION_ONFIELD,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_TOGRAVE,nil,1,1-tp,LOCATION_ONFIELD)
+end
+function s.tgop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_TOGRAVE)
+	local g=Duel.SelectMatchingCard(tp,Card.IsAbleToGrave,tp,0,LOCATION_ONFIELD,1,1,nil)
+	if #g>0 then
+		Duel.HintSelection(g,true)
+		Duel.SendtoGrave(g,REASON_EFFECT)
+	end
+end
 --cannot special summon
 function s.sumlimit(e,c,sump,sumtype,sumpos,targetp,se)
 	return c:IsLocation(LOCATION_EXTRA) and not c:IsSetCard(0xe0)
@@ -75,7 +105,7 @@ function s.relcon(e)
 	return Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsSetCard,SET_AMORPHAGE),e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end
 function s.rellimit(e,c,tp,sumtp)
-	return not c:IsSetCard(SET_AMORPHAGE)
+	return c:IsLocation(LOCATION_GRAVE) and not c:IsSetCard(SET_AMORPHAGE)
 end
 function s.lizfilter(e,c)
 	return not c:IsOriginalSetCard(SET_AMORPHAGE)
@@ -112,4 +142,9 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp)
 end
 function s.destop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Destroy(e:GetHandler(),REASON_EFFECT)
+end
+--boost
+function s.atkcon(e)
+	local tp=e:GetHandlerPlayer()
+	return Duel.GetFieldGroupCount(tp,LOCATION_MZONE,0)<Duel.GetFieldGroupCount(tp,0,LOCATION_MZONE)
 end

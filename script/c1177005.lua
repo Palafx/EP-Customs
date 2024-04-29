@@ -1,8 +1,8 @@
---- Eluf, The Adaptive Gust
-	-- Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Eluf, The Adaptive Gust
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
---search
+	--search
 	local e1=Effect.CreateEffect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH)
@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e1:SetTarget(s.addtg)
 	e1:SetOperation(s.addop)
 	c:RegisterEffect(e1)
---bounce
+	--bounce
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_TOHAND)
@@ -25,7 +25,7 @@ function s.initial_effect(c)
 	e2:SetTarget(s.thtg)
 	e2:SetOperation(s.thop)
 	c:RegisterEffect(e2)
---recover
+	--recover
 	local e3=Effect.CreateEffect(c)
 	e3:SetCategory(CATEGORY_TOHAND)
 	e3:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
@@ -37,6 +37,8 @@ function s.initial_effect(c)
 	e3:SetOperation(s.reop)
 	c:RegisterEffect(e3)
 end
+s.listed_names={id}
+s.listed_series={0x499}
 --search
 function s.addfilter(c)
 	return c:IsType(TYPE_EQUIP+TYPE_TRAP) and c:IsAbleToHand() and c:IsSetCard(0x499)
