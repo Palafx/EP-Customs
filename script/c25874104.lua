@@ -24,7 +24,7 @@ function s.initial_effect(c)
 	e3:SetProperty(EFFECT_FLAG_DELAY)
 	e3:SetCode(EVENT_TO_HAND)
 	e3:SetRange(LOCATION_MZONE)
-	e3:SetCountLimit(3,id)
+	e3:SetCountLimit(2,id)
 	e3:SetCondition(s.scon0)
 	e3:SetTarget(s.atttg)
 	e3:SetOperation(s.attop)
@@ -43,17 +43,17 @@ function s.cfilter(c,tp)
 	return c:IsControler(tp) and c:IsPreviousLocation(LOCATION_DECK)
 end
 function s.scon0(e,tp,eg,ep,ev,re,r,rp)
-	return eg:IsExists(s.cfilter,1,nil,1-tp) and Duel.GetFieldGroupCount(1-tp,LOCATION_ONFIELD|LOCATION_HAND|LOCATION_GRAVE,0)>0
+	return eg:IsExists(s.cfilter,1,nil,1-tp) and Duel.GetFieldGroupCount(1-tp,LOCATION_ONFIELD|LOCATION_GRAVE,0)>0
 end
 function s.atttg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.attfilter,tp,0,LOCATION_ONFIELD|LOCATION_HAND|LOCATION_GRAVE,1,nil,e)
+	if chk==0 then return Duel.IsExistingMatchingCard(s.attfilter,tp,0,LOCATION_ONFIELD|LOCATION_GRAVE,1,nil,e)
 		and e:GetHandler():IsType(TYPE_XYZ) end
 end
 function s.attop(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	if not c:IsRelateToEffect(e) or c:IsFacedown() then return end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_XMATERIAL)
-	local tc=Duel.SelectMatchingCard(tp,s.attfilter,tp,0,LOCATION_ONFIELD|LOCATION_HAND|LOCATION_GRAVE,1,1,nil,e):GetFirst()
+	local tc=Duel.SelectMatchingCard(tp,s.attfilter,tp,0,LOCATION_ONFIELD|LOCATION_GRAVE,1,1,nil,e):GetFirst()
 	if tc then
 		Duel.Overlay(c,tc,true)
 	end

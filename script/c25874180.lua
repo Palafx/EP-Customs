@@ -1,37 +1,38 @@
---- Masked HERO Inferno
-	-- Scripted by EP Custom Cards https://www.facebook.com/EP-Custom-Cards-103958475692047
+--Masked HERO Inferno
+--Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
--- SPECIAL SUMMON
+	--Special Summon from GY
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e1:SetType(EFFECT_TYPE_QUICK_O)
 	e1:SetRange(LOCATION_GRAVE)
 	e1:SetCode(EVENT_FREE_CHAIN)
-	e1:SetCountLimit(1,id)
+	e1:SetCountLimit(1,{id,1})
 	e1:SetCost(aux.bfgcost)
 	e1:SetTarget(s.sptg)
 	e1:SetOperation(s.spop)
 	c:RegisterEffect(e1)
---	INCREASE ATK
+	--ATK up
 	local e2=Effect.CreateEffect(c)
 	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_ATKCHANGE)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_F)
 	e2:SetCode(EVENT_TO_GRAVE)
-	e2:SetCountLimit(1,id+100)
+	e2:SetCountLimit(1,{id,2})
 	e2:SetCondition(s.sencon)
-	--e2:SetCost(s.cost)
 	e2:SetOperation(s.atkop)
 	c:RegisterEffect(e2)
 end
-	-- special summon
+s.listed_names={id}
+s.listed_series={0xa008,0x3008,0x8}
+--special summon
 function s.filter(c,e,tp)
 	return c:IsSetCard(0xa008) or c:IsSetCard(0x3008) and c:IsCanBeSpecialSummoned(e,0,tp,true,false)
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
-		and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_GRAVE,0,1,nil,e,tp) end
+		and Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_GRAVE,0,1,e:GetHandler(),e,tp) end
 	Duel.SetOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,LOCATION_GRAVE)
 end
 function s.spop(e,tp,eg,ep,ev,re,r,rp)
@@ -63,7 +64,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 	local tc=e:GetLabelObject()
 	Duel.Destroy(tc,REASON_EFFECT)
 end
-	-- increase atk
+--increase atk
 function s.sencon(e,tp,eg,ep,ev,re,r,rp)
 	local c=e:GetHandler()
 	return re and re:GetHandler():IsType(TYPE_SPELL) and c:IsReason(REASON_EFFECT)

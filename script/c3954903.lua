@@ -25,6 +25,19 @@ function s.initial_effect(c)
 	e2:SetOperation(s.thop)
 	c:RegisterEffect(e2)
 end
+s.listed_names={id}
+s.listed_series={0xf72,0xf73}
+--3954901 // Felgrand Dragon
+--6075801 // Paladin of Felgrand
+--33460840 // Guardian of Felgrand
+--60681103 // Divine Dragon Lord Felgrand
+--6853254 // Return of the Dragon Lords
+--7935043 // Aegis of the Ocean Dragon Lord
+--10485110 // Ocean Dragon Lord - Neo-Daedalus
+--23931679 // Ocean Dragon Lord - Kairyu-Shin
+--24857466 // Van'Dalgyon the Dark Dragon Lord
+--34230233 // Grapha, Dragon Lord of Dark World
+--69868555 // Ruins of the Divine Dragon Lords
 --special summon
 function s.filter(c,e,tp)
 	return c:GetLevel()==7 or c:GetLevel()==8 and c:IsRace(RACE_DRAGON) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
@@ -44,7 +57,8 @@ function s.sumop(e,tp,eg,ep,ev,re,r,rp)
 end
 --search
 function s.thfilter(c)
-	return c:IsSetCard(0xf72) or c:IsSetCard(0xf73) or c:IsCode(3954901,6075801,33460840,60681103,6853254,7935043,10485110,23931679,24857466,34230233,69868555) and c:IsAbleToHand()
+	return c:IsSetCard(0xf72) or c:IsSetCard(0xf73)
+	or c:IsCode(3954901,6075801,33460840,60681103,6853254,7935043,10485110,23931679,24857466,34230233,69868555) and c:IsAbleToHand()
 end
 function s.thtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.thfilter,tp,LOCATION_DECK,0,1,nil) end

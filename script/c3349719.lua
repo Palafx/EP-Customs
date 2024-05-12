@@ -22,6 +22,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 	--Search
 	e3=e2:Clone()
+	e3:SetDescription(aux.Stringid(id,1))
 	e3:SetCategory(CATEGORY_TOHAND)
 	e3:SetCode(EVENT_REMOVE)
 	e3:SetCondition(s.thcon)

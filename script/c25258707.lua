@@ -71,8 +71,16 @@ function s.exfilter(c,e,tp)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.tgfilter,tp,LOCATION_HAND,0,1,nil) end
-	local ct=Duel.DiscardHand(tp,s.tgfilter,1,3,REASON_DISCARD+REASON_COST)
-	e:SetLabel(ct)
+	if Duel.GetLocationCount(tp,LOCATION_MZONE)>0 then
+		local ct=Duel.DiscardHand(tp,s.tgfilter,1,3,REASON_DISCARD+REASON_COST)
+		e:SetLabel(ct)
+	elseif Duel.GetLocationCountFromEx(tp,tp,nil,c)>0 then
+		local ct=Duel.DiscardHand(tp,s.tgfilter,2,3,REASON_DISCARD+REASON_COST)
+		e:SetLabel(ct)
+	else
+		local ct=Duel.DiscardHand(tp,s.tgfilter,2,2,REASON_DISCARD+REASON_COST)
+		e:SetLabel(ct)
+	end
 end
 function s.sptg(e,tp,eg,ep,ev,re,r,rp,chk)
 	local c=e:GetHandler()
