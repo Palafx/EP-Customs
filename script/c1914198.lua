@@ -32,12 +32,12 @@ function s.initial_effect(c)
 end
 s.listed_series={0x8}
 --indes
-function s.cfilter(c)
+function s.cfilter1(c)
 	return c:IsFaceup() and c:IsSetCard(0x8)
 end
 function s.con(e,tp,eg,ep,ev,re,r,rp)
 	local tp=e:GetHandlerPlayer()
-	local g=Duel.GetMatchingGroup(s.cfilter,tp,LOCATION_MZONE,0,nil)
+	local g=Duel.GetMatchingGroup(s.cfilter1,tp,LOCATION_MZONE,0,nil)
 	return g:GetClassCount(Card.GetAttribute)>=2
 end
 --Negate
@@ -53,7 +53,6 @@ function s.negcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.IsExistingMatchingCard(s.cfilter,tp,LOCATION_DECK,0,1,nil,att) end
 	local cg=Duel.SelectMatchingCard(tp,s.cfilter,tp,LOCATION_DECK,0,1,1,nil,att)
 	Duel.SendtoGrave(cg,REASON_COST)
-	--(tp,s.cfilter,1,1,REASON_COST,nil,att)
 end
 function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return true end

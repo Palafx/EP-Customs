@@ -1,13 +1,14 @@
---Infinity Chaos Ground
+--Infinity Chaos Blaze
 --Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
---Activate
+	--Activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_SEARCH+CATEGORY_DICE)
 	e1:SetType(EFFECT_TYPE_IGNITION)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	e1:SetRange(LOCATION_HAND)
+	e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
 	e1:SetCost(s.cost)
 	e1:SetTarget(s.target)
 	e1:SetOperation(s.operation)
@@ -50,13 +51,17 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 			Duel.Damage(tp,1000,REASON_EFFECT)
 		end
 	elseif d==2 then
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-		local g=Duel.SelectMatchingCard(tp,Card.IsLevel,tp,LOCATION_DECK,0,1,1,nil,tc:GetLevel())
-		if #g>0 and Duel.SendtoHand(g,nil,REASON_EFFECT)>0 then
-			Duel.Recover(tp,1000,REASON_EFFECT)
-			Duel.ConfirmCards(1-tp,g)
-		else
+		if tc:GetLevel()==0 then
 			Duel.Damage(tp,1000,REASON_EFFECT)
+		else
+			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+			local g=Duel.SelectMatchingCard(tp,Card.IsLevel,tp,LOCATION_DECK,0,1,1,nil,tc:GetLevel())
+			if #g>0 and Duel.SendtoHand(g,nil,REASON_EFFECT)>0 then
+				Duel.Recover(tp,1000,REASON_EFFECT)
+				Duel.ConfirmCards(1-tp,g)
+			else
+				Duel.Damage(tp,1000,REASON_EFFECT)
+			end
 		end
 	elseif d==3 then
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
@@ -77,13 +82,17 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 			Duel.Damage(tp,1000,REASON_EFFECT)
 		end
 	elseif d==5 then
-		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
-		local g=Duel.SelectMatchingCard(tp,Card.IsDefense,tp,LOCATION_DECK,0,1,1,nil,tc:GetDefense())
-		if #g>0 and Duel.SendtoHand(g,nil,REASON_EFFECT)>0 then
-			Duel.Recover(tp,1000,REASON_EFFECT)
-			Duel.ConfirmCards(1-tp,g)
-		else
+		if tc:GetLink()>0 then
 			Duel.Damage(tp,1000,REASON_EFFECT)
+		else
+			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
+			local g=Duel.SelectMatchingCard(tp,Card.IsDefense,tp,LOCATION_DECK,0,1,1,nil,tc:GetDefense())
+			if #g>0 and Duel.SendtoHand(g,nil,REASON_EFFECT)>0 then
+				Duel.Recover(tp,1000,REASON_EFFECT)
+				Duel.ConfirmCards(1-tp,g)
+			else
+				Duel.Damage(tp,1000,REASON_EFFECT)
+			end
 		end
 	else
 		Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_ATOHAND)
