@@ -2,12 +2,12 @@
 --Scripted by EP Custom Cards
 local s,id=GetID()
 function s.initial_effect(c)
---Activate
+	--Activate
 	local e1=Effect.CreateEffect(c)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
 	e1:SetCode(EVENT_FREE_CHAIN)
 	c:RegisterEffect(e1)
---atkup
+	--atkup
 	local e2=Effect.CreateEffect(c)
 	e2:SetType(EFFECT_TYPE_FIELD)
 	e2:SetCode(EFFECT_UPDATE_ATTACK)
@@ -15,8 +15,8 @@ function s.initial_effect(c)
 	e2:SetTargetRange(LOCATION_MZONE,LOCATION_MZONE)
 	e2:SetValue(s.val)
 	c:RegisterEffect(e2)
---gain effects
-	--yellow
+	--gain effects
+		--yellow
 	local e3=Effect.CreateEffect(c)
 	e3:SetDescription(3001)
 	e3:SetType(EFFECT_TYPE_FIELD)
@@ -26,7 +26,7 @@ function s.initial_effect(c)
 	e3:SetTarget(s.indestg1)
 	e3:SetValue(1)
 	c:RegisterEffect(e3)
-	--red
+		--red
 	local e4=Effect.CreateEffect(c)
 	e4:SetDescription(3002)
 	e4:SetType(EFFECT_TYPE_FIELD)
@@ -36,7 +36,7 @@ function s.initial_effect(c)
 	e4:SetTarget(s.indestg2)
 	e4:SetValue(1)
 	c:RegisterEffect(e4)
-	--green
+		--green
 	local e5=Effect.CreateEffect(c)
 	e5:SetDescription(3000)
 	e5:SetType(EFFECT_TYPE_FIELD)
@@ -46,12 +46,24 @@ function s.initial_effect(c)
 	e5:SetTarget(s.indestg3)
 	e5:SetValue(1)
 	c:RegisterEffect(e5)
+	--Normal
+	local e6=Effect.CreateEffect(c)
+	e6:SetDescription(aux.Stringid(id,0))
+	e6:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
+	e6:SetProperty(EFFECT_FLAG_DELAY)
+	e6:SetCode(EVENT_TO_HAND)
+	e6:SetRange(LOCATION_FZONE)
+	e6:SetCountLimit(1)
+	e6:SetCondition(s.nscon)
+	e6:SetTarget(s.nstg)
+	e6:SetOperation(s.nsop)
+	c:RegisterEffect(e6)
 end
 s.listed_series={0x51}
 s.listed_names={13839120,86445415,41172955}
 --gain atk
 function s.val(e,c)
-	return c:GetEquipCount(s.filter)*300
+	return c:GetEquipGroup():FilterCount(Card.IsSetCard,nil,0x51)*300
 end
 function s.filter(c)
   return c:IsType(TYPE_MONSTER) and c:IsSetCard(0x51)
@@ -74,4 +86,28 @@ function s.green(c)
 end
 function s.indestg3(e,c)
 	return c:GetEquipCount(s.green)>0
+end
+--Normal
+function s.cfilter(c,tp)
+	return c:IsMonster() and (c:IsSetCard(0x7) or c:IsSetCard(0x51)) and c:IsControler(tp)
+		and c:IsPreviousLocation(LOCATION_DECK) and not c:IsReason(REASON_DRAW)
+end
+function s.nscon(e,tp,eg,ep,ev,re,r,rp)
+	return eg:IsExists(s.cfilter,1,nil,tp)
+end
+function s.nsfilter(c)
+	return c:IsRace(RACE_MACHINE) and c:IsSummonable(true,nil)
+end
+function s.nstg(e,tp,eg,ep,ev,re,r,rp,chk)
+	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_MZONE)>0
+		and Duel.IsExistingMatchingCard(s.nsfilter,tp,LOCATION_HAND,0,1,nil) end
+	Duel.SetOperationInfo(0,CATEGORY_SUMMON,nil,1,0,0)
+end
+function s.nsop(e,tp,eg,ep,ev,re,r,rp)
+	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SUMMON)
+	local g=Duel.SelectMatchingCard(tp,s.nsfilter,tp,LOCATION_HAND,0,1,1,nil)
+	local tc=g:GetFirst()
+	if tc then
+		Duel.Summon(tp,tc,true,nil)
+	end
 end
