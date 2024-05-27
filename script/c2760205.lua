@@ -18,7 +18,7 @@ end
 s.listed_names={id}
 s.listed_series={0xc51,0xc52}
 function s.negcon(e,tp,eg,ep,ev,re,r,rp)
-	return rp==1-tp and Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsSetCard,0xc51),tp,LOCATION_ONFIELD,0,1,nil)
+	return rp==1-tp and Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsSetCard,0xc51),tp,LOCATION_MZONE,0,1,nil)
 		and Duel.IsChainNegatable(ev)
 end
 function s.negtg(e,tp,eg,ep,ev,re,r,rp,chk)

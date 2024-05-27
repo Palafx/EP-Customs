@@ -7,6 +7,7 @@ function s.initial_effect(c)
 	Pendulum.AddProcedure(c)
 	--Protect
 	local e0=Effect.CreateEffect(c)
+	e0:SetDescription(aux.Stringid(id,0))
 	e0:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e0:SetProperty(EFFECT_FLAG_DELAY+EFFECT_FLAG_CARD_TARGET)
 	e0:SetCode(EVENT_SUMMON_SUCCESS)
@@ -22,7 +23,7 @@ function s.initial_effect(c)
 	----Monster Effect
 	--Special summon from hand
 	local e2=Effect.CreateEffect(c)
-	e2:SetDescription(aux.Stringid(id,0))
+	e2:SetDescription(aux.Stringid(id,1))
 	e2:SetCategory(CATEGORY_SPECIAL_SUMMON)
 	e2:SetType(EFFECT_TYPE_FIELD+EFFECT_TYPE_TRIGGER_O)
 	e2:SetProperty(EFFECT_FLAG_DELAY)
