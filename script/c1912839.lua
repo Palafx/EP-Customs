@@ -54,7 +54,7 @@ function s.activate(e,tp,eg,ep,ev,re,r,rp)
 	end
 end
 --special summon
-function s.spfilter(c,e,tp)
+function s.spfilter(c,tp)
 	return c:IsSetCard(SET_UMBRAL_HORROR) and c:IsCanBeSpecialSummoned(e,0,tp,false,false)
 end
 function s.tdfilter(c)

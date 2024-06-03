@@ -48,7 +48,7 @@ function s.filter2(c)
 	return c:GetAttack()>0
 end
 function s.doubtg(e,tp,eg,ep,ev,re,r,rp,chk)
-	if chk==0 then return Duel.IsExistingMatchingCard(s.filter,tp,LOCATION_MZONE,0,1,nil) 
+	if chk==0 then return Duel.IsExistingMatchingCard(aux.FaceupFilter(s.filter),tp,LOCATION_MZONE,0,1,nil) 
 		or Duel.IsExistingMatchingCard(s.filter2,tp,0,LOCATION_MZONE,1,nil) end
 end
 function s.doubop(e,tp,eg,ep,ev,re,r,rp)
