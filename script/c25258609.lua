@@ -89,12 +89,12 @@ function s.limcon(e,c)
 	return Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsSetCard,0xc59),tp,LOCATION_MZONE,0,1,nil)
 end
 function s.limittg(e,c,tp)
-	local t1,t2,t3=Duel.GetActivityCount(tp,ACTIVITY_SUMMON,ACTIVITY_FLIPSUMMON,ACTIVITY_SPSUMMON)
-	return t1+t2+t3>=2
+	local t1=Duel.GetActivityCount(tp,ACTIVITY_SPSUMMON)
+	return t1>=2
 end
 function s.countval(e,re,tp)
-	local t1,t2,t3=Duel.GetActivityCount(tp,ACTIVITY_SUMMON,ACTIVITY_FLIPSUMMON,ACTIVITY_SPSUMMON)
-	if t1+t2+t3>=2 then return 0 else return 2-t1-t2-t3 end
+	local t1=Duel.GetActivityCount(tp,ACTIVITY_SPSUMMON)
+	if t1>=2 then return 0 else return 2-t1-t2-t3 end
 end
 --spell limit
 function s.aclimit1(e,tp,eg,ep,ev,re,r,rp)

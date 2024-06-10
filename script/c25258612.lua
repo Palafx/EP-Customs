@@ -25,16 +25,19 @@ function s.target(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	Duel.SetPossibleOperationInfo(0,CATEGORY_DISABLE,g,1,0,0)
 	Duel.SetPossibleOperationInfo(0,CATEGORY_SPECIAL_SUMMON,nil,1,tp,0x13)
 end
+function s.spfilter(c,e,tp,tc)
+	local own=tc:GetOwner()
+	return c:IsCode(tc:GetCode()) and c:IsCanBeSpecialSummoned(e,0,own,false,false)
+end
 function s.operation(e,tp,eg,ep,ev,re,r,rp)
 	local d=math.random(1,20)
 	local c=e:GetHandler()
 	local tc=Duel.GetFirstTarget()
-	local copy=tc:GetCode()
 	local own=tc:GetOwner()
 	if d==1 then
 		if Duel.SelectYesNo(own,HINTMSG_SPSUMMON) and Duel.GetLocationCount(own,LOCATION_MZONE)>0 then
 			Duel.Hint(HINT_SELECTMSG,own,HINTMSG_SPSUMMON)
-			local g=Duel.SelectMatchingCard(own,copy,own,0x13,0,1,1,nil,e,tp)
+			local g=Duel.SelectMatchingCard(own,s.spfilter,own,0x13,0,1,1,nil,e,tp)
 			if #g>0 then
 				Duel.SpecialSummon(g,0,own,tp,false,false,POS_FACEUP)
 			end

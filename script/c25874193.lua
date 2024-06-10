@@ -13,7 +13,7 @@ function s.initial_effect(c)
 	e0:SetCountLimit(1,id)
 	e0:SetCode(EVENT_SPSUMMON_SUCCESS)
 	e0:SetProperty(EFFECT_FLAG_DELAY)
-	e0:SetCondition(s.tgcon)
+	e0:SetCondition(function(e) return e:GetHandler():IsSummonType(SUMMON_TYPE_SYNCHRO) end)
 	e0:SetTarget(s.thtg)
 	e0:SetOperation(s.thop)
 	c:RegisterEffect(e0)
@@ -45,9 +45,6 @@ function s.initial_effect(c)
 end
 s.listed_names={65196094,88332693,80280737,id}
 --add
-function s.tgcon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsSummonType(SUMMON_TYPE_SYNCHRO)
-end
 function s.thfilter(c)
 	return (c:IsCode(65196094) or c:IsCode(88332693) or c:IsCode(80280737))  and c:IsAbleToHand()
 end

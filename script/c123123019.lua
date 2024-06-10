@@ -31,7 +31,7 @@ s.listed_names={id}
 s.listed_series={0x4cf}
 --atk
 function s.adval(e,c)
-	return Duel.GetFieldGroupCount(c:GetControler(),LOCATION_HAND,0)*200
+	return Duel.GetFieldGroupCount(c:GetControler(),0,LOCATION_HAND)*200
 end
 --discard
 function s.cfilter(c)

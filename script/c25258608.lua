@@ -50,7 +50,7 @@ function s.operation(e,tp,eg,ep,ev,re,r,rp)
 		end
 	elseif d>10 and d<20 then
 		if Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_MZONE,1,nil)
-		or Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_HAND,1,nil) then
+		and Duel.IsExistingMatchingCard(Card.IsAbleToRemove,tp,0,LOCATION_HAND,1,nil) then
 			--Select option
 			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_EFFECT)
 			local op=Duel.SelectOption(tp,aux.Stringid(id,0),aux.Stringid(id,1))
