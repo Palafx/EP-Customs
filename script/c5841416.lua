@@ -7,7 +7,9 @@ function s.initial_effect(c)
 	e1:SetDescription(aux.Stringid(id,0))
 	e1:SetCategory(CATEGORY_TOHAND+CATEGORY_REMOVE+CATEGORY_ATKCHANGE)
 	e1:SetType(EFFECT_TYPE_ACTIVATE)
+	e1:SetHintTiming(0,TIMINGS_CHECK_MONSTER_E)
 	e1:SetCode(EVENT_FREE_CHAIN)
+	e1:SetCountLimit(1,{id,1})
 	e1:SetCondition(s.condition)
 	e1:SetOperation(s.operation)
 	c:RegisterEffect(e1)
@@ -18,6 +20,7 @@ function s.initial_effect(c)
 	e2:SetType(EFFECT_TYPE_SINGLE+EFFECT_TYPE_TRIGGER_O)
 	e2:SetCode(EVENT_REMOVE)
 	e2:SetProperty(EFFECT_FLAG_DAMAGE_STEP+EFFECT_FLAG_DELAY)
+	e2:SetCountLimit(1,{id,1})
 	e2:SetCost(s.ascost)
 	e2:SetTarget(s.astg)
 	e2:SetOperation(s.asop)
@@ -27,6 +30,7 @@ s.listed_names={id}
 s.listed_series={0xc58}
 function s.condition(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsSetCard,0xc58),tp,LOCATION_MZONE,0,1,nil)
+		and Duel.GetMatchingGroupCount(aux.TRUE,tp,LOCATION_REMOVED,0,nil)>2
 end
 function s.target(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetMatchingGroupCount(aux.TRUE,tp,LOCATION_REMOVED,0,nil)>2 end

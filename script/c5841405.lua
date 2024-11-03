@@ -49,7 +49,7 @@ function s.desop(e,tp,eg,ep,ev,re,r,rp)
 end
 --attach
 function s.ovfil(c)
-	return c:IsSetCard(0xc58)
+	return c:IsSetCard(0xc58) and c:IsFaceup()
 end
 function s.ovcon(e,tp,eg,ep,ev,re,r,rp)
 	return eg:IsExists(s.ovfil,1,nil)

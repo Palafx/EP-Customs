@@ -59,18 +59,18 @@ function s.checktg(e,c)
 	return not c:IsPublic()
 end
 --destroy
-function s.descon(e,tp,eg,ep,ev,re,r,rp)
-	return e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ)
-end
 function s.stfilter(c)
 	return c:IsFaceup() and c:IsSpellTrap() and c:IsSetCard(0xc58)
 end
+function s.descon(e,tp,eg,ep,ev,re,r,rp)
+	return e:GetHandler():IsSummonType(SUMMON_TYPE_XYZ) and Duel.GetMatchingGroupCount(s.stfilter,tp,LOCATION_REMOVED,0,nil)>0
+end
 function s.destg(e,tp,eg,ep,ev,re,r,rp,chk,chkc)
 	local ct=Duel.GetMatchingGroupCount(s.stfilter,tp,LOCATION_REMOVED,0,nil)
-	if chkc then return chkc:IsOnField() and chkc~=e:GetHandler() end
+	if chkc then return chkc:IsOnField() and chkc~=e:GetHandler() and ct>0 end
 	if chk==0 then return Duel.IsExistingTarget(aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,nil) end
 	Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_DESTROY)
-	local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,2,e:GetHandler())
+	local g=Duel.SelectTarget(tp,aux.TRUE,tp,LOCATION_ONFIELD,LOCATION_ONFIELD,1,ct,nil)
 	Duel.SetOperationInfo(0,CATEGORY_DESTROY,g,#g,0,0)
 end
 function s.desop(e,tp,eg,ep,ev,re,r,rp)

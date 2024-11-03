@@ -79,7 +79,7 @@ function s.rmop(e,tp,eg,ep,ev,re,r,rp)
 		if Duel.GetFieldGroupCount(tp,LOCATION_REMOVED,0)>14 and Duel.GetFieldGroupCount(tp,0,LOCATION_GRAVE)>1
 			and Duel.SelectYesNo(tp,aux.Stringid(id,3)) then
 			Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_REMOVE)
-			local g=Duel.SelectMatchingCard(tp,nil,tp,0,LOCATION_GRAVE,2,2,nil)
+			local g=Duel.SelectMatchingCard(tp,nil,tp,0,LOCATION_GRAVE,1,1,nil)
 			if #g then
 				Duel.Remove(g,POS_FACEUP,REASON_EFFECT)
 			end
