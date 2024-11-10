@@ -19,7 +19,7 @@ function s.cost(e,tp,eg,ep,ev,re,r,rp,chk)
 end
 function s.cfilter(c,e,tp,ft)
 	local lv=c:GetLevel()
-	return c:IsSetCard(0x4cf) and lv>0 and (ft>0 or (c:IsControler(tp) and c:GetSequence()<5)) and (c:IsControler(tp) or c:IsFaceup())
+	return c:IsSetCard(0x4cf) and lv>0 and (ft>0 or (c:IsControler(tp) and c:GetSequence()<5)) and c:IsControler(tp) and c:IsFaceup()
 end
 function s.spfilter(c,lv,e,tp)
 	return (c:GetLevel()==lv+2 or c:GetLevel()==lv-2) and c:IsSetCard(0x4cf) and c:IsCanBeSpecialSummoned(e,0,tp,false,false,POS_FACEUP)
