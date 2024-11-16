@@ -88,7 +88,7 @@ function s.spop(e,tp,eg,ep,ev,re,r,rp,c)
 end
 --equip
 function s.eqfilter(c,ec)
-	return c:IsType(TYPE_EQUIP+TYPE_TRAP) and c:IsSetCard(0x499)
+	return c:IsType(TYPE_EQUIP+TYPE_TRAP) and c:IsSetCard(0x499) and not c:IsContinuousTrap()
 end
 function s.eqtg(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.GetLocationCount(tp,LOCATION_SZONE)>0

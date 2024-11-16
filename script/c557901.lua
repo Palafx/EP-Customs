@@ -29,7 +29,7 @@ s.listed_names={id}
 s.listed_series={SET_GENERAIDER}
 --special summon
 function s.rfilter(c,tp)
-	return c:IsSetCard(SET_GENERAIDER) or c:IsRace(RACE_SPELLCASTER) and Duel.GetMZoneCount(tp,c)>0
+	return c:IsSetCard(SET_GENERAIDER) or c:IsRace(RACE_SPELLCASTER) and Duel.GetMZoneCount(tp,c)>0 and not c:IsCode(id)
 end
 function s.spcost(e,tp,eg,ep,ev,re,r,rp,chk)
 	if chk==0 then return Duel.CheckReleaseGroupCost(tp,s.rfilter,1,false,nil,nil,tp) end

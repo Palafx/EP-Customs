@@ -45,6 +45,9 @@ function s.initial_effect(c)
 	e5:SetCode(EFFECT_UNRELEASABLE_NONSUM)
 	c:RegisterEffect(e5)
 end
+s.roll_dice=true
+s.listed_names={1177022,id}
+s.listed_series={0x499}
 function s.lvfilter(c)
 	return c:IsFaceup() and c:IsSetCard(0x499)
 end
