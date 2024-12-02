@@ -25,7 +25,7 @@ end
 function s.efilter(e,te)
 	local typ=e:GetLabelObject():GetLabel()
 	--Debug.Message("The type received is "..tostring(typ))
-	return te:IsActiveType(typ)
+	return te:IsActiveType(typ) and te:GetOwnerPlayer()~=e:GetHandlerPlayer()
 end
 function s.cfcon(e,tp,eg,ep,ev,re,r,rp)
 	return Duel.GetTurnPlayer()==tp and Duel.GetFieldGroupCount(tp,0,LOCATION_DECK)>0

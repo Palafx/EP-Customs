@@ -5,7 +5,6 @@ function s.initial_effect(c)
 	--Activate
 	local e1=Ritual.CreateProc({handler=c,lvtype=RITPROC_EQUAL,filter=aux.FilterBoolFunction(s.ritualfilter),extrafil=s.extragroup,
 								extraop=s.extraop,nil,location=LOCATION_GRAVE,forcedselection=s.ritcheck,extratg=s.extratg})
-	e1:SetCountLimit(1,id,EFFECT_COUNT_CODE_OATH)
 	c:RegisterEffect(e1)
 end
 s.listed_series={SET_GISHKI}

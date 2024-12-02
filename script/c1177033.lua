@@ -89,5 +89,5 @@ end
 --unaffected
 function s.efilter(e,te)
   local at=e:GetHandler():GetEquipTarget():GetAttribute()
-  return te:IsMonsterEffect() and te:IsActivated() and te:GetHandler():IsAttribute(at)
+  return te:IsMonsterEffect() and te:IsActivated() and te:GetHandler():IsAttribute(at) and te:GetOwnerPlayer()~=e:GetHandlerPlayer()
 end
